@@ -1,0 +1,16 @@
+# SCsub
+
+Import('env')
+
+sources = [
+	"register_types.cpp",
+    "subdivider.cpp",
+    "halfedge/he_mesh.cpp",
+    "halfedge/objparse.cpp"
+]
+
+# First, create a custom env for the shared library.
+module_env = env.Clone()
+module_env.Append(CCFLAGS=['-O2']) # Flags for C and C++ code
+module_env.Append(CXXFLAGS=['-std=c++11']) # Flags for C++ code only
+module_env.add_source_files(env.modules_sources, sources)
