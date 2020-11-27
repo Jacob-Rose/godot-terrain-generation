@@ -4,7 +4,8 @@ Import('env')
 
 sources = [
     "register_types.cpp",
-    "mouse_image.cpp"
+    "chunk.cpp",
+    "chunk_manager.cpp"
 ]
 
 # First, create a custom env for the shared library.

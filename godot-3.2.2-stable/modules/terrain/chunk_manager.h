@@ -3,9 +3,9 @@
 #ifndef CHUNKMANAGER_H
 #define CHUNKMANAGER_H
 
-#include <core/main/node.h>
-#include <core/image.h>
-#include <core\engine.h>
+#include "scene/main/node.h"
+#include "core/image.h"
+#include "core/engine.h"
 
 
 class ChunkManager : public Node {

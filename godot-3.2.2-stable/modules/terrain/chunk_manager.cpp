@@ -6,13 +6,16 @@
 void ChunkManager::_bind_methods() {
 }
 
-void ChunkManager::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_PROCESS:
-			_process(get_process_delta_time()); //this is called each frame like Update() in Unity
-		case NOTIFICATION_DRAW:
-			_draw();
-	}
+void ChunkManager::_notification(int p_what)
+{
+	//switch (p_what) {
+	//	case NOTIFICATION_PROCESS:
+	//		_process(get_process_delta_time()); //this is called each frame like Update() in Unity
+	//		update();
+	//		break;
+	//	case NOTIFICATION_DRAW:
+	//		_draw();
+	//}
 }
 
 ChunkManager::ChunkManager() {

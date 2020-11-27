@@ -6,11 +6,11 @@
 #include "chunk.h"
 #include "chunk_manager.h"
 
-void register_mouse_image_types() {
+void register_terrain_types() {
 	ClassDB::register_class<Chunk>();
 	ClassDB::register_class<ChunkManager>();
 }
 
-void unregister_mouse_image_types() {
+void unregister_terrain_types() {
 	// Nothing to do here in this example.
 }

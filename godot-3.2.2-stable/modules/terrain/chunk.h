@@ -3,10 +3,10 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
-#include <core/reference.h>
-#include <core/image.h>
-#include <core/engine.h>
-#include <scene/3d/mesh_instance.h>
+#include "core/reference.h"
+#include "core/image.h"
+#include "core/engine.h"
+#include "scene/3d/mesh_instance.h"
 
 
 class Chunk : public MeshInstance {
