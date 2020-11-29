@@ -4,6 +4,7 @@
 
 #include "core/class_db.h"
 #include "chunk.h"
+#include "noise.h"
 #include "chunk_manager.h"
 
 void register_terrain_types() {

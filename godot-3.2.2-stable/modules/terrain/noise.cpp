@@ -18,16 +18,11 @@ void NoiseGenerator::_notification(int p_what) {
 }
 
 NoiseGenerator::NoiseGenerator() {
-	set_process(true);
 }
 
 void NoiseGenerator::_process(float delta)
 {
-	//_process can run in editor too, we need to specify not to run in editor here
-	if(!Engine::get_singleton()->is_editor_hint()) {
 
-
-	}
 }
 
 void NoiseGenerator::_draw() {
