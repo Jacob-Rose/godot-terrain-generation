@@ -9,6 +9,7 @@
 void register_terrain_types() {
 	ClassDB::register_class<Chunk>();
 	ClassDB::register_class<ChunkManager>();
+	ClassDB::register_class<NoiseGenerator>();
 }
 
 void unregister_terrain_types() {
