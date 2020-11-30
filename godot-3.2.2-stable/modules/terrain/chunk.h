@@ -5,6 +5,8 @@
 
 #include "core/reference.h"
 #include "core/image.h"
+#include "scene/resources/mesh.h"
+#include "core/os/input.h"
 #include "core/engine.h"
 #include "scene/3d/mesh_instance.h"
 
@@ -19,11 +21,16 @@ class Chunk : public MeshInstance {
 		void _notification(int p_what);
 	public:
 		Chunk();
+		Chunk(float x, float z, int desiredSize);
 
-		void _process(float delta);
+		//	void _process(float delta);
+		void _update();
+		void _ready();
 
-		void _draw();
+		float xPos, zPos;
 
+		int chunkSize;
+		
 };
 
 
