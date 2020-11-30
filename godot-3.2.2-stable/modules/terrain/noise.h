@@ -3,27 +3,26 @@
 #ifndef PERLINNOISE_H
 #define PERLINNOISE_H
 
-#include "core/reference.h"
-#include "core/image.h"
-#include "core/engine.h"
-#include "scene/3d/mesh_instance.h"
+#include <core/object.h>
+#include <core/image.h>
 
-
-class NoiseGenerator : public Reference {
-	GDCLASS(NoiseGenerator, Reference);
+//https://solarianprogrammer.com/2012/07/18/perlin-noise-cpp-11/
+class NoiseGenerator  {
 
 	protected:
-		static void _bind_methods();
 
-		//notification is the only auto-linked function in a GDCLASS
-		void _notification(int p_what);
+		std::vector<int> p;
 	public:
 		NoiseGenerator();
 
-		void _process(float delta);
+		Ref<Image> getImage(Vector2i imageSize, Vector2i imageOffset, float scale);
+		Ref<Image> getImage() { return getImage(Vector2i(100, 100), Vector2i(0, 0), 1.0f); }
 
-		void _draw();
+		float noise(float x, float y, float z);
 
+		float fade(float t);
+		float lerp(float a, float b, float t);
+		float grad(int hash, float x, float y, float z);
 };
 
 
