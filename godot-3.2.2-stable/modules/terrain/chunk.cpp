@@ -9,27 +9,41 @@ void Chunk::_bind_methods() {
 }
 
 void Chunk::_notification(int p_what) {
-	//switch (p_what) {
-	//	case NOTIFICATION_PROCESS:
-	//		_process(get_process_delta_time()); //this is called each frame like Update() in Unity
-	//	case NOTIFICATION_DRAW:
-	//		_draw();
-	//}
+	switch (p_what) {
+		case NOTIFICATION_PROCESS: {
+
+			_update();
+		} break;
+
+		case NOTIFICATION_READY: {
+			_ready();
+		} break;
+	}
 }
 
 Chunk::Chunk() {
 	set_process(true);
 }
 
-void Chunk::_process(float delta)
-{
-	//_process can run in editor too, we need to specify not to run in editor here
-	if(!Engine::get_singleton()->is_editor_hint()) {
-
-
-	}
+Chunk::Chunk(float x, float z, int desiredSize) {
+	set_process(true);
+	xPos = x;
+	zPos = z;
+	chunkSize = desiredSize;
 }
 
-void Chunk::_draw() {
-
+void Chunk::_update() {
 }
+
+void Chunk::_ready() {
+	
+}
+
+//void Chunk::_process(float delta)
+//{
+//	//_process can run in editor too, we need to specify not to run in editor here
+//	if(!Engine::get_singleton()->is_editor_hint()) {
+//
+//
+//	}
+//}

@@ -4,9 +4,11 @@
 #define CHUNKMANAGER_H
 
 #include "scene/main/node.h"
+#include "scene/resources/mesh.h"
+#include "core/math/triangle_mesh.h"
 #include "core/image.h"
 #include "core/engine.h"
-
+#include "chunk.h"
 
 class ChunkManager : public Node {
 	GDCLASS(ChunkManager, Node);
@@ -19,9 +21,11 @@ class ChunkManager : public Node {
 	public:
 		ChunkManager();
 
-		void _process(float delta);
+	//	void _process(float delta);
+		void _update();
+		void _ready();
 
-		void _draw();
+		int numberOfChunks = 1;
 };
 
 
