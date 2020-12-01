@@ -53,11 +53,17 @@ void ChunkManager::createChunk(int desiredChunks) {
 
 void ChunkManager::createCube(MeshInstance *meshI, int x, int y, int z) {
 
+	//left face
 	makeFace(Vector3(x, y, z), Vector3(x, y + 1, z), Vector3(x, y + 1, z + 1), Vector3(x, y, z + 1));
+	//Right face
 	makeFace(Vector3(x + 1, y, z + 1), Vector3(x + 1, y + 1, z + 1), Vector3(x + 1, y + 1, z), Vector3(x + 1, y, z));
+	//down face
 	makeFace(Vector3(x + 1, y, z), Vector3(x, y, z), Vector3(x, y, z + 1), Vector3(x + 1, y, z + 1));
+	//upface
 	makeFace(Vector3(x + 1, y + 1, z + 1), Vector3(x, y + 1, z + 1), Vector3(x, y + 1, z), Vector3(x + 1, y + 1, z));
+	//backface
 	makeFace(Vector3(x + 1, y, z), Vector3(x + 1, y + 1, z), Vector3(x, y + 1, z), Vector3(x, y, z));
+	//frontface
 	makeFace(Vector3(x, y, z + 1), Vector3(x, y + 1, z + 1), Vector3(x + 1, y + 1, z + 1), Vector3(x + 1, y, z + 1));
 
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
@@ -67,6 +73,7 @@ void ChunkManager::createCube(MeshInstance *meshI, int x, int y, int z) {
 	mesh_array[Mesh::ARRAY_VERTEX] = vertices;
 	mesh_array[Mesh::ARRAY_INDEX] = indices;
 	mesh_array[Mesh::ARRAY_NORMAL] = normals;
+	mesh_array[ArrayMesh::ARRAY_COLOR] = Color(1, 1, 1);
 
 	arrayMesh.add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_array);
 	a = arrayMesh.reference();
