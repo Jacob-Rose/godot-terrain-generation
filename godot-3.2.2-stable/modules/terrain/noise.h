@@ -1,14 +1,16 @@
 /* noise.h */
 
-#ifndef PERLINNOISE_H
-#define PERLINNOISE_H
+#ifndef TERRAINNOISE_H
+#define TERRAINNOISE_H
 
 #include <core/object.h>
 #include <core/image.h>
+#include <vector>
+#include <core/reference.h>
 
 //https://solarianprogrammer.com/2012/07/18/perlin-noise-cpp-11/
-class NoiseGenerator  {
-
+class NoiseGenerator : public Reference {
+	GDCLASS(NoiseGenerator, Reference);
 	protected:
 
 		std::vector<int> p;
@@ -26,4 +28,4 @@ class NoiseGenerator  {
 };
 
 
-#endif // PERLINNOISE_H
+#endif // TERRAINNOISE_H
