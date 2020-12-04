@@ -3,8 +3,15 @@
 #include "noise.h"
 #include <random>
 #include <numeric>
+#include "PerlinNoise.hpp"
+
+void NoiseGenerator::_bind_methods() {
+	//ClassDB::bind_method(D_METHOD("createImage"), &NoiseGenerator::createImage);
+	ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImage);
+}
 
 NoiseGenerator::NoiseGenerator() {
+	/*
 	p.resize(256);
 
 	std::iota(p.begin(), p.end(), 0);
@@ -13,12 +20,26 @@ NoiseGenerator::NoiseGenerator() {
 	std::shuffle(p.begin(), p.end(), engine);
 
 	p.insert(p.end(), p.begin(), p.end());
+	*/
 }
 
 
 
-Ref<Image> NoiseGenerator::getImage(Vector2i imageSize, Vector2i imageOffset, float scale) {
-	return Ref<Image>();
+Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float scale) {
+	Ref<Image> img = memnew(Image);
+	img->create(imageSize, imageSize, false, Image::Format::FORMAT_RGBA8);
+	img->lock();
+	siv::PerlinNoise noiseGen;
+	noiseGen.reseed(1234); //or any seed
+
+	for (size_t i = 0; i < imageSize; i++) {
+		for (size_t j = 0; j < imageSize; j++) {
+			float color = noiseGen.noise2D_0_1(((((double)i) / imageSize) + imageOffset.x) * scale, (((double)j / imageSize) + imageOffset.y) * scale);
+			img->set_pixel(i, j, Color(color, color, color));
+		}
+	}
+	
+	return img;
 }
 
 float NoiseGenerator::noise(float x, float y, float z) {

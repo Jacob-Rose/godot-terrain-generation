@@ -12,13 +12,12 @@
 class NoiseGenerator : public Reference {
 	GDCLASS(NoiseGenerator, Reference);
 	protected:
-
+		static void _bind_methods();
 		std::vector<int> p;
 	public:
 		NoiseGenerator();
 
-		Ref<Image> getImage(Vector2i imageSize, Vector2i imageOffset, float scale);
-		Ref<Image> getImage() { return getImage(Vector2i(100, 100), Vector2i(0, 0), 1.0f); }
+		Ref<Image> getImage(int imageSize, Vector2 imageOffset, float scale);
 
 		float noise(float x, float y, float z);
 
