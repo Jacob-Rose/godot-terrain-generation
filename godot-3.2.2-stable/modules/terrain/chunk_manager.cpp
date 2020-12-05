@@ -2,7 +2,10 @@
 
 #include "chunk_manager.h"
 
-void ChunkManager::_bind_methods() {
+void ChunkManager::_bind_methods()
+{
+	ClassDB::bind_method(D_METHOD("get_central_chunk_location"), &ChunkManager::getCentralChunkLocation);
+	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -18,7 +21,9 @@ void ChunkManager::_notification(int p_what) {
 	}
 }
 
-ChunkManager::ChunkManager() {
+ChunkManager::ChunkManager()
+{
+	locationOfCentralChunk = Vector2(0, 0);
 	set_process(true);
 }
 //Pretty sure dont need this since we have our own custom _update function now
@@ -104,4 +109,46 @@ void ChunkManager::makeFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
 	normals.append(b.normalized());
 	normals.append(c.normalized());
 	normals.append(d.normalized());
+}
+
+// This function checks if any new chunks need to be loaded by checking if the player has stepped outside of the central chunk
+bool ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
+	bool needsReloading = false;
+
+	// Create directional vector and the distance between the current chunk and player
+	Vector2 directionalVector = playerPos - locationOfCentralChunk;
+	float distance = sqrtf(powf(directionalVector.x, 2.0f) + powf(directionalVector.y, 2.0f));
+
+	// Check if player is outside of central chunk square and adjust central chunk if needed
+	if (directionalVector.x <= -LENGTH_OF_SQUARE)
+	{
+		locationOfCentralChunk.x -= LENGTH_OF_SQUARE * 2.0f;
+		needsReloading = true;
+	}
+
+	if (directionalVector.x >= LENGTH_OF_SQUARE)
+	{
+		locationOfCentralChunk.x += LENGTH_OF_SQUARE * 2.0f;
+		needsReloading = true;
+	}
+
+	if (directionalVector.y <= -LENGTH_OF_SQUARE)
+	{
+		locationOfCentralChunk.y -= LENGTH_OF_SQUARE * 2.0f;
+		needsReloading = true;
+	}
+
+	if (directionalVector.y >= LENGTH_OF_SQUARE)
+	{
+		locationOfCentralChunk.y += LENGTH_OF_SQUARE * 2.0f;
+		needsReloading = true;
+	}
+
+	return needsReloading;
+}
+
+// This function gets the central chunk location
+Vector2 ChunkManager::getCentralChunkLocation()
+{
+	return locationOfCentralChunk;
 }

@@ -1,4 +1,4 @@
-extends Node
+extends ChunkManager
 
 const ChunkResource = preload("res://Floor.tscn")
 const LengthOfSquare = 10
@@ -16,27 +16,12 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	var AdjustedLocation = false
-	var ShortenedPlayerPos = Vector2(Player.transform.origin.x,Player.transform.origin.z)
-	var DirVector = ShortenedPlayerPos - CurrentLocationOfChunk
-	var FinalDistance = sqrt(pow(ShortenedPlayerPos.x - CurrentLocationOfChunk.x,2)  + pow(ShortenedPlayerPos.y - CurrentLocationOfChunk.y,2))
+	var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
 	
-	if DirVector.x <= -LengthOfSquare:
-		CurrentLocationOfChunk.x -= LengthOfSquare * 2
-		AdjustedLocation = true
-	if DirVector.x >= LengthOfSquare:
-		CurrentLocationOfChunk.x += LengthOfSquare * 2
-		AdjustedLocation = true
-	if DirVector.y <= -LengthOfSquare:
-		CurrentLocationOfChunk.y -= LengthOfSquare * 2
-		AdjustedLocation = true
-	if DirVector.y >= LengthOfSquare:
-		CurrentLocationOfChunk.y += LengthOfSquare * 2
-		AdjustedLocation = true
-	
-	if AdjustedLocation:
-		makeNewChunk(CurrentLocationOfChunk)
-	
+	if needsToBeReloaded:
+		makeNewChunk(get_central_chunk_location())
+		pass
+
 	pass
 
 func makeNewChunk(newPos):

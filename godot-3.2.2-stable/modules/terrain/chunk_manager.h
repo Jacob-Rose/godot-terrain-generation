@@ -26,6 +26,8 @@ class ChunkManager : public Node {
 		Array mesh_array;
 
 		Vector3 meshArray[6];
+		const float LENGTH_OF_SQUARE = 10.0f;
+		Vector2 locationOfCentralChunk;
 		PoolVector3Array vertices = PoolVector3Array();
 		PoolVector3Array normals = PoolVector3Array();
 		PoolIntArray indices = PoolIntArray();
@@ -37,6 +39,8 @@ class ChunkManager : public Node {
 		void _update();
 		void _ready();
 		void createChunk(int desiredChunks);
+		bool checkIfChunksNeedToBeReloaded(Vector2 playerPos);
+		Vector2 getCentralChunkLocation();
 		void createCube(MeshInstance* meshInstance,int x, int y, int z);
 		void makeFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d);
 		
