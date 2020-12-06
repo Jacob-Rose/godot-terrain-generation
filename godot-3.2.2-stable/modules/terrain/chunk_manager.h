@@ -11,6 +11,7 @@
 #include "core/image.h"
 #include "core/engine.h"
 #include "chunk.h"
+#include "core/resource.h"
 
 class ChunkManager : public Node {
 	GDCLASS(ChunkManager, Node);
@@ -31,6 +32,8 @@ class ChunkManager : public Node {
 		PoolVector3Array vertices = PoolVector3Array();
 		PoolVector3Array normals = PoolVector3Array();
 		PoolIntArray indices = PoolIntArray();
+
+		Ref<Resource> newSource;
 
 	public:
 		ChunkManager();

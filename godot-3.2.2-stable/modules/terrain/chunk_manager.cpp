@@ -1,6 +1,7 @@
 /* chunk_manager.cpp */
 
 #include "chunk_manager.h"
+#include "core/io/resource_loader.h"
 
 void ChunkManager::_bind_methods()
 {
@@ -23,6 +24,7 @@ void ChunkManager::_notification(int p_what) {
 
 ChunkManager::ChunkManager()
 {
+	newSource = ResourceLoader::load("res://Floor.tcsn");
 	locationOfCentralChunk = Vector2(0, 0);
 	set_process(true);
 }
