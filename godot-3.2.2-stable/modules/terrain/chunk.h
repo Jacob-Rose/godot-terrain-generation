@@ -10,11 +10,32 @@
 #include "scene/resources/mesh.h"
 #include "core/os/input.h"
 #include "core/engine.h"
+#include "core/method_bind_ext.gen.inc"
 #include "scene/3d/mesh_instance.h"
 
 
 class Chunk : public MeshInstance {
 	GDCLASS(Chunk, MeshInstance);
+
+	class MeshData {
+
+	public:
+		PoolVector3Array *vertices;
+		PoolIntArray *triangles;
+		PoolVector2Array *uvs;
+		Array mesh_array;
+		int triangleiD = 0;
+
+		Ref<ArrayMesh> rArrayMesh = memnew(ArrayMesh);
+		;
+		MeshData(double meshX, double meshY) {
+			vertices = new PoolVector3Array[meshX * meshY];
+			triangles = new PoolIntArray[(meshX - 1) * (meshY - 1) * 6];
+			uvs = new PoolVector2Array[meshX * meshY];
+		}
+		void addTriangle(int a, int b, int c);
+		void createMesh();
+	};
 
 	protected:
 		static void _bind_methods();
@@ -41,6 +62,7 @@ class Chunk : public MeshInstance {
 
 		float xPos, zPos;
 
+		Ref<ArrayMesh> generateTerrainMesh(Image heightMap);
 		int chunkSize;
 		
 };
