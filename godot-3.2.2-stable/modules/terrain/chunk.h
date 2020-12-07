@@ -3,6 +3,8 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
+#include "core/math/triangle_mesh.h"
+#include "scene/main/node.h"
 #include "core/reference.h"
 #include "core/image.h"
 #include "scene/resources/mesh.h"
@@ -19,6 +21,15 @@ class Chunk : public MeshInstance {
 
 		//notification is the only auto-linked function in a GDCLASS
 		void _notification(int p_what);
+
+		//original
+		PoolVector3Array vertices;
+		PoolColorArray colors;
+
+		//updated
+		PoolVector3Array _vertices;
+		PoolColorArray _colors;
+		bool redraw;
 	public:
 		Chunk();
 		Chunk(float x, float z, int desiredSize);
@@ -26,6 +37,7 @@ class Chunk : public MeshInstance {
 		//	void _process(float delta);
 		void _update();
 		void _ready();
+		void _draw();
 
 		float xPos, zPos;
 
