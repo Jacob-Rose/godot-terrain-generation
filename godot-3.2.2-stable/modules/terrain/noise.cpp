@@ -7,7 +7,7 @@
 
 void NoiseGenerator::_bind_methods() {
 	//ClassDB::bind_method(D_METHOD("createImage"), &NoiseGenerator::createImage);
-	//ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getImage);
+	//ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImage);
 }
 
 NoiseGenerator::NoiseGenerator() {
@@ -17,7 +17,7 @@ NoiseGenerator::NoiseGenerator() {
 
 
 //Based of Sebastian Lague tutorial in Unity https://www.youtube.com/watch?v=MRNFcywkUSA&t=568s
-Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity) {
+Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float scale, int octaves, float persistance, float lacunarity) {
 	
 	Ref<Image> img = memnew(Image);
 	img->create(imageSize, imageSize, false, Image::Format::FORMAT_RGBA8);
@@ -79,6 +79,10 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float sc
 	return img;
 	
 	return nullptr;
+}
+
+Ref<Image> NoiseGenerator::getImageSimple(int imageSize, Vector2 imageOffset, float scale) {
+	return getImage(imageSize, imageOffset, scale, 3, 0.5f, 2.0f);
 }
 
 //https://cs.nyu.edu/~perlin/noise/

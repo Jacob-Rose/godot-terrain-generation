@@ -17,7 +17,7 @@ var offset = Vector2(0,0)
 var noiseGen = NoiseGenerator.new()
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	image = noiseGen.getImage(imgSize, offset, imgZoom)
+	image = noiseGen
 	
 	set_process_input(true)
 	pass # Replace with function body.

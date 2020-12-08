@@ -16,19 +16,8 @@ class NoiseGenerator : public Reference {
 	public:
 		NoiseGenerator();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="imageSize">Size in pixels of image</param>
-		/// <param name="imageOffset">Offset in pixels of noise origin</param>
-		/// <param name="scale">The zoom factor for the perlin noise</param>
-		/// <param name="octaves">The number of octaves to include in the noise, created finer details</param>
-		/// <param name="persistance">How clear the octaves show in the noise</param>
-		/// <param name="lacunarity">How clear the octaves show in the noise</param>
-		///
-		/// <example>getImage(100,Vector2(0,0), 1.0f, 3, 0.8, 2.0)</example>
-		/// <returns>Noise Image</returns>
 		Ref<Image> getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
+		Ref<Image> getImageSimple(int imageSize, Vector2 imageOffset, float scale);
 
 		float fade(float t);
 		float lerp(float a, float b, float t);
