@@ -62,7 +62,7 @@ class Chunk : public MeshInstance {
 
 		float xPos, zPos;
 
-		Ref<ArrayMesh> generateTerrainMesh(Image heightMap);
+		void generateTerrainMesh(Ref<Image> heightMap);
 		int chunkSize;
 		
 };

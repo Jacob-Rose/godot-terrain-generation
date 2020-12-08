@@ -26,7 +26,7 @@ Chunk::Chunk()
 {
 	xPos = 0.0f;
 	zPos = 0.0f;
-	redraw = true;
+	redraw = false;
 	chunkSize = 0.0f;
 	set_process(true);
 }
@@ -35,7 +35,7 @@ Chunk::Chunk(float x, float z, int desiredSize) {
 	set_process(true);
 	xPos = x;
 	zPos = z;
-	redraw = true;
+	redraw = false;
 	chunkSize = desiredSize;
 }
 
@@ -62,36 +62,6 @@ void Chunk::_ready()
 {
 	set_process(true);
 	set_process_input(true);
-
-	//6 vertices for the two triangles
-	vertices.push_back(Vector3(0, 100,0));
-	vertices.push_back(Vector3(100, 0,0));
-	vertices.push_back(Vector3(0, 0,0));
-	vertices.push_back(Vector3(0, 100,0));
-	vertices.push_back(Vector3(100, 100,0));
-	vertices.push_back(Vector3(100, 0,0));
-
-	colors.append(Color(1, 1, 1));
-	colors.append(Color(0, 1, 0));
-	colors.append(Color(0, 0, 1));
-	colors.append(Color(1, 0, 0));
-	colors.append(Color(0, 0, 0));
-	colors.append(Color(0, 1, 0));
-
-	//Copying the data into another set
-	_vertices.push_back(Vector3(0, 100,0));
-	_vertices.push_back(Vector3(100, 0,0));
-	_vertices.push_back(Vector3(0, 0,0));
-	_vertices.push_back(Vector3(0, 100,0));
-	_vertices.push_back(Vector3(100, 100,0));
-	_vertices.push_back(Vector3(100, 0,0));
-
-	_colors.append(Color(1, 1, 1));
-	_colors.append(Color(0, 1, 0));
-	_colors.append(Color(0, 0, 1));
-	_colors.append(Color(1, 0, 0));
-	_colors.append(Color(0, 0, 0));
-	_colors.append(Color(0, 1, 0));
 }
 
 void Chunk::_draw()
@@ -131,6 +101,7 @@ void Chunk::MeshData::addTriangle(int a, int b, int c) {
 
 
 void Chunk::MeshData::createMesh() {
+	mesh_array.resize(ArrayMesh::ARRAY_MAX);
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
 	mesh_array[ArrayMesh::PRIMITIVE_TRIANGLES] = triangles;
 	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
@@ -138,10 +109,10 @@ void Chunk::MeshData::createMesh() {
 	rArrayMesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_array);
 }
 
-Ref<ArrayMesh> Chunk::generateTerrainMesh(Image heightMap) {
+void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 
-	int width = heightMap.get_width();
-	int height = heightMap.get_height();
+	int width = heightMap->get_width();
+	int height = heightMap->get_height();
 
 	float topLeftX = (width - 1) / -2.0f;
 	float topLeftY = (height - 1) / 2.0f;
@@ -151,7 +122,7 @@ Ref<ArrayMesh> Chunk::generateTerrainMesh(Image heightMap) {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			meshData->vertices[vertiD].append(Vector3(topLeftX + x, heightMap.get_pixel(x, y).r, topLeftY - y));
+			meshData->vertices[vertiD].append(Vector3(topLeftX + x, heightMap->get_pixel(x, y).r, topLeftY - y));
 			meshData->uvs[vertiD].append(Vector2(x / static_cast<float>(width), y / static_cast<float>(height)));
 
 			if (x < width - 1 && y < height - 1) {
@@ -165,5 +136,7 @@ Ref<ArrayMesh> Chunk::generateTerrainMesh(Image heightMap) {
 
 	meshData->createMesh();
 	a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, meshData->mesh_array);
-	return a;
+
+	if (this != NULL)
+		this->set_mesh(a);
 }

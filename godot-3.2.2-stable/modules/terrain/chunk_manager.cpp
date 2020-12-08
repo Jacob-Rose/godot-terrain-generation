@@ -8,6 +8,7 @@ void ChunkManager::_bind_methods()
 	ClassDB::bind_method(D_METHOD("get_central_chunk_location"), &ChunkManager::getCentralChunkLocation);
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 	ClassDB::bind_method(D_METHOD("creaet_chunk", "player_2d_position","size_chunk"), &ChunkManager::checkIfChunksNeedToBeReloaded);
+	ClassDB::bind_method(D_METHOD("create_chunk", "Playerpos", "aqui"), &ChunkManager::createChunk);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -49,9 +50,12 @@ void ChunkManager::createChunk(Vector3 playerPos,int desiredChunks) {
 
 	for (int i = 0; i < desiredChunks; i++) {
 		Chunk *chunk = new Chunk(0, 1, 0);
+		NoiseGenerator *noiseMap = new NoiseGenerator();
 		//chunk->set_mesh(mySimpleMesh);
 		for (int j = 0; j < 1; j++) {
-			createCube(chunk, 0, 1, 0);
+			//createCube(chunk, 0, 1, 0);
+			chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1));
+			add_child(chunk);
 			printf("Cube spawned");
 		}
 
