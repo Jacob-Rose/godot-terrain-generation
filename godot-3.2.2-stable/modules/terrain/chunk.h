@@ -26,7 +26,6 @@ class Chunk : public MeshInstance {
 		Array mesh_array;
 		int triangleiD = 0;
 
-		Ref<ArrayMesh> rArrayMesh = memnew(ArrayMesh);
 		;
 		MeshData(double meshX, double meshY) {
 			vertices = new PoolVector3Array[meshX * meshY];

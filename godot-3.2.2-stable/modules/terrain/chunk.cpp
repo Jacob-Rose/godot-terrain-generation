@@ -106,7 +106,6 @@ void Chunk::MeshData::createMesh() {
 	mesh_array[ArrayMesh::PRIMITIVE_TRIANGLES] = triangles;
 	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
 	mesh_array[ArrayMesh::ARRAY_COLOR] = Color(1, 1, 1);
-	rArrayMesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_array);
 }
 
 void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
@@ -134,7 +133,14 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 	}
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
 
-	meshData->createMesh();
+//	meshData->createMesh();
+	Array mesh_array;
+	
+	mesh_array.resize(ArrayMesh::ARRAY_MAX);
+	mesh_array[ArrayMesh::ARRAY_VERTEX] = meshData->vertices;
+	mesh_array[ArrayMesh::PRIMITIVE_TRIANGLES] = meshData->triangles;
+	//mesh_array[ArrayMesh::ARRAY_TEX_UV] = meshData->uvs;
+	mesh_array[ArrayMesh::ARRAY_COLOR] = Color(1, 1, 1);
 	a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, meshData->mesh_array);
 
 	if (this != NULL)
