@@ -1,11 +1,14 @@
 /* chunk_manager.cpp */
 
 #include "chunk_manager.h"
+#include "core/io/resource_loader.h"
 
 void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("get_central_chunk_location"), &ChunkManager::getCentralChunkLocation);
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
+	ClassDB::bind_method(D_METHOD("creaet_chunk", "player_2d_position","size_chunk"), &ChunkManager::checkIfChunksNeedToBeReloaded);
+	ClassDB::bind_method(D_METHOD("create_chunk", "Playerpos", "aqui"), &ChunkManager::createChunk);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -23,6 +26,7 @@ void ChunkManager::_notification(int p_what) {
 
 ChunkManager::ChunkManager()
 {
+	newSource = ResourceLoader::load("res://Floor.tcsn");
 	locationOfCentralChunk = Vector2(0, 0);
 	set_process(true);
 }
@@ -39,16 +43,19 @@ void ChunkManager::_update() {
 }
 
 void ChunkManager::_ready() {
-	createChunk(numberOfChunks);
+	
 }
 
-void ChunkManager::createChunk(int desiredChunks) {
+void ChunkManager::createChunk(Vector3 playerPos,int desiredChunks) {
 
 	for (int i = 0; i < desiredChunks; i++) {
 		Chunk *chunk = new Chunk(0, 1, 0);
+		NoiseGenerator *noiseMap = new NoiseGenerator();
 		//chunk->set_mesh(mySimpleMesh);
 		for (int j = 0; j < 1; j++) {
-			createCube(chunk, 0, 1, 0);
+			//createCube(chunk, 0, 1, 0);
+			chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1));
+			add_child(chunk);
 			printf("Cube spawned");
 		}
 
@@ -72,8 +79,6 @@ void ChunkManager::createCube(MeshInstance *meshI, int x, int y, int z) {
 	makeFace(Vector3(x, y, z + 1), Vector3(x, y + 1, z + 1), Vector3(x + 1, y + 1, z + 1), Vector3(x + 1, y, z + 1));
 
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
-
-	mesh_array.resize(Mesh::ARRAY_MAX);
 
 	mesh_array[Mesh::ARRAY_VERTEX] = vertices;
 	mesh_array[Mesh::ARRAY_INDEX] = indices;
@@ -110,6 +115,33 @@ void ChunkManager::makeFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
 	normals.append(c.normalized());
 	normals.append(d.normalized());
 }
+
+Ref<ArrayMesh> ChunkManager::generateTerrainMesh(Image heightMap) {
+
+	int width = heightMap.get_width();
+	int height = heightMap.get_height();
+
+	float topLeftX = (width - 1) / -2.0f;
+	float topLeftY = (height - 1) / 2.0f;
+	int vertiD = 0;
+
+	MeshData *meshData = new MeshData(width, height);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			meshData->vertices[vertiD].append(Vector3(topLeftX+x, heightMap.get_pixel(x,y).r,topLeftY-y));
+			meshData->uvs[vertiD].append(Vector2(x / (float)width, y / (float)height));
+			if (x < width -1 && y < height -1) {
+				meshData->addTriangle(vertiD, vertiD + width + 1, vertiD + width);
+				meshData->addTriangle(vertiD+width+1, vertiD, vertiD + 1);
+			}
+			vertiD++;
+		}
+	}
+	Ref<ArrayMesh> a = memnew(ArrayMesh);
+	a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES,meshData->mesh_array);
+	return a;
+}
+
 
 // This function checks if any new chunks need to be loaded by checking if the player has stepped outside of the central chunk
 bool ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
@@ -151,4 +183,25 @@ bool ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 Vector2 ChunkManager::getCentralChunkLocation()
 {
 	return locationOfCentralChunk;
+}
+
+void ChunkManager::MeshData::addTriangle(int a, int b, int c) {
+	triangles[triangleiD].append(a);
+	triangles[triangleiD+1].append(b);
+	triangles[triangleiD+2].append(c);
+	triangleiD += 3;
+}
+
+
+Ref<ArrayMesh> ChunkManager::MeshData::createMesh() {
+
+	Ref<ArrayMesh> a = memnew(ArrayMesh);
+
+	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
+	mesh_array[ArrayMesh::PRIMITIVE_TRIANGLES] = triangles;
+	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
+	mesh_array[ArrayMesh::ARRAY_COLOR] = Color(1, 1, 1);
+	a->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_array);
+
+	return a;
 }

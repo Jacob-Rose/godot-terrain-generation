@@ -5,9 +5,14 @@ const LengthOfSquare = 10
 var CurrentLocationOfChunk = Vector2(0,0)
 var Player
 var Blocks
+var FunkyDelta
+var HasCame
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	FunkyDelta = 0
+	HasCame = false
+	#create_chunk(Vector3(0,0,0), 1)
 	Blocks = []
 	Player = get_node("player")
 	makeNewChunk(CurrentLocationOfChunk)
@@ -15,8 +20,14 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
+func _process(delta):
 	var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
+	
+	#FunkyDelta += delta
+	
+	#if FunkyDelta >= 2 and not HasCame:
+	#	create_chunk(Vector3(0,0,0), 1)
+	#	HasCame = true
 	
 	if needsToBeReloaded:
 		makeNewChunk(get_central_chunk_location())
