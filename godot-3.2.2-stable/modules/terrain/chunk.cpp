@@ -24,8 +24,6 @@ void Chunk::_notification(int p_what) {
 
 Chunk::Chunk()
 {
-	xPos = 0.0f;
-	zPos = 0.0f;
 	redraw = false;
 	chunkSize = 0.0f;
 	set_process(true);
@@ -33,8 +31,6 @@ Chunk::Chunk()
 
 Chunk::Chunk(float x, float z, int desiredSize) {
 	set_process(true);
-	xPos = x;
-	zPos = z;
 	redraw = false;
 	chunkSize = desiredSize;
 }
@@ -91,22 +87,7 @@ void Chunk::_draw()
 //
 //
 //	}
-//}
-void Chunk::MeshData::addTriangle(int a, int b, int c) {
-	triangles[triangleiD].append(a);
-	triangles[triangleiD + 1].append(b);
-	triangles[triangleiD + 2].append(c);
-	triangleiD += 3;
-}
-
-
-void Chunk::MeshData::createMesh() {
-	mesh_array.resize(ArrayMesh::ARRAY_MAX);
-	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
-	mesh_array[ArrayMesh::PRIMITIVE_TRIANGLES] = triangles;
-	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
-	mesh_array[ArrayMesh::ARRAY_COLOR] = Color(1, 1, 1);
-}
+//
 
 void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 
