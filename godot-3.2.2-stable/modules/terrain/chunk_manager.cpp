@@ -54,7 +54,7 @@ void ChunkManager::createChunk(Vector3 playerPos,int desiredChunks) {
 		//chunk->set_mesh(mySimpleMesh);
 		for (int j = 0; j < 1; j++) {
 			//createCube(chunk, 0, 1, 0);
-			chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1));
+			chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,1,1.0f,1.0f));
 			add_child(chunk);
 			printf("Cube spawned");
 		}
