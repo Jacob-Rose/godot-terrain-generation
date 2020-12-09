@@ -17,25 +17,6 @@
 class Chunk : public MeshInstance {
 	GDCLASS(Chunk, MeshInstance);
 
-	class MeshData {
-
-	public:
-		PoolVector3Array *vertices;
-		PoolIntArray *triangles;
-		PoolVector2Array *uvs;
-		Array mesh_array;
-		int triangleiD = 0;
-
-		;
-		MeshData(double meshX, double meshY) {
-			vertices = new PoolVector3Array[meshX * meshY];
-			triangles = new PoolIntArray[(meshX - 1) * (meshY - 1) * 6];
-			uvs = new PoolVector2Array[meshX * meshY];
-		}
-		void addTriangle(int a, int b, int c);
-		void createMesh();
-	};
-
 	protected:
 		static void _bind_methods();
 
@@ -50,6 +31,7 @@ class Chunk : public MeshInstance {
 		PoolVector3Array _vertices;
 		PoolColorArray _colors;
 		bool redraw;
+
 	public:
 		Chunk();
 		Chunk(float x, float z, int desiredSize);
@@ -59,7 +41,7 @@ class Chunk : public MeshInstance {
 		void _ready();
 		void _draw();
 
-		float xPos, zPos;
+		Array DrawFace(Vector<Vector3> verteces);
 
 		void generateTerrainMesh(Ref<Image> heightMap);
 		int chunkSize;

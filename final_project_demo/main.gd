@@ -21,17 +21,18 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
+	#var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
 	
-	#FunkyDelta += delta
+	FunkyDelta += delta
 	
-	#if FunkyDelta >= 2 and not HasCame:
-	#	create_chunk(Vector3(0,0,0), 1)
-	#	HasCame = true
+	if FunkyDelta >= 2 and not HasCame:
+		print("Here")
+		create_chunk(Vector3(0,0,0), 1)
+		HasCame = true
 	
-	if needsToBeReloaded:
-		makeNewChunk(get_central_chunk_location())
-		pass
+	#if needsToBeReloaded:
+	#	makeNewChunk(get_central_chunk_location())
+	#	pass
 
 	pass
 
