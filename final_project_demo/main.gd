@@ -30,6 +30,13 @@ func _process(delta):
 		create_chunk(Vector3(0,0,0), 1)
 		HasCame = true
 	
+	var children = get_children()
+	
+	for child in children:
+		if child is Chunk:
+			#remove_child(child)
+			print("Oh yeah")
+	
 	#if needsToBeReloaded:
 	#	makeNewChunk(get_central_chunk_location())
 	#	pass
