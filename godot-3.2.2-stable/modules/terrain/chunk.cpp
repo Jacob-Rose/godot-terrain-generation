@@ -2,7 +2,7 @@
 
 #include "chunk.h"
 #include "scene/main/viewport.h" //used to get mouse position in _process(float)
-
+#include <sstream>
 
 void Chunk::_bind_methods() {
 	//ClassDB::bind_method(D_METHOD("generate_Terrain_Mesh", "heightMap"), &Chunk::generateTerrainMesh);
@@ -121,18 +121,22 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 	{
 		for (int x = 0; x < width; x++)
 		{
+			std::stringstream convert;
+			convert << heightMap->get_pixel(x, y).g;
+			printf(convert.str().c_str());
+
 			if (y != 0 && x != width - 1)
 			{
 				newQuad.resize(0);
-				newQuad.push_back(Vector3(x * 2, y * 2, heightMap->get_pixel(x, y).r) * 10);
-				newQuad.push_back(Vector3((x + 1) * 2, y * 2, heightMap->get_pixel((x + 1), y).r) * 10);
-				newQuad.push_back(Vector3(x * 2, (y - 1) * 2, heightMap->get_pixel(x, y - 1).r) * 10);
-				newQuad.push_back(Vector3((x + 1) * 2, (y - 1) * 2, heightMap->get_pixel(x + 1, y - 1).r) * 10);
+				newQuad.push_back(Vector3(x * 2, 1, -y * 2));
+				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y).r * 5, -y * 2));
+				newQuad.push_back(Vector3(x * 2, heightMap->get_pixel(x, y-1).r * 5, -(y - 1) * 2));
+				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y-1).r * 5, -(y - 1) * 2));
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad));
 			}
 		}
 
-		//Draw Face here
+	//	//Draw Face here
 	}
 
 	if (this != NULL)
