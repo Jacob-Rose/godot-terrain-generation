@@ -2,12 +2,16 @@
 
 #include "noise.h"
 #include <random>
+#include <algorithm>
 #include <numeric>
+#include <core/method_bind.h>
+#include <core/method_bind_ext.gen.inc> //wow this is necessary for functions over five parameters to bind
 #include "PerlinNoise.hpp"
 
 void NoiseGenerator::_bind_methods() {
 	//ClassDB::bind_method(D_METHOD("createImage"), &NoiseGenerator::createImage);
-	//ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImage);
+	ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImageSimple);
+	ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getImage);
 }
 
 NoiseGenerator::NoiseGenerator() {
@@ -17,7 +21,7 @@ NoiseGenerator::NoiseGenerator() {
 
 
 //Based of Sebastian Lague tutorial in Unity https://www.youtube.com/watch?v=MRNFcywkUSA&t=568s
-Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float scale, int octaves, float persistance, float lacunarity) {
+Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity) {
 	
 	Ref<Image> img = memnew(Image);
 	img->create(imageSize, imageSize, false, Image::Format::FORMAT_RGBA8);
@@ -36,8 +40,8 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float s
 	}
 
 	
-	float maxNoiseHeight = -100.0f; //good nuf
-	float minNoiseHeight = 100.0f; //good nuf
+	float maxNoiseHeight = -2.5; //approximation, this is not done with normalization as that creates inconsistancies between noise maps
+	float minNoiseHeight = 2.5; //good nuf
 
 	for (int x = 0; x < imageSize; ++x) {
 		for (int y = 0; y < imageSize; ++y) {
@@ -46,8 +50,8 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float s
 			float noiseHeight = 0.0f;
 
 			for (int k =0; k < octaves; ++k) {
-				float xPos = x / scale * frequency + octaveOffsets[k].x;
-				float yPos = y / scale * frequency + octaveOffsets[k].y;
+				float xPos = ((x) / scale * frequency + octaveOffsets[k].x) + (imageOffset.x * frequency);
+				float yPos = ((y) / scale * frequency + octaveOffsets[k].y) + (imageOffset.y * frequency);
 
 				float noiseVal = (noiseGen.noise2D_0_1(xPos, yPos) * 2.0f) - 1.0f;
 				noiseHeight += noiseVal * amplitude;
@@ -56,11 +60,13 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float s
 				frequency *= lacunarity;
 			}
 
+			/*
 			if (noiseHeight > maxNoiseHeight) {
 				maxNoiseHeight = noiseHeight;
 			} else if (noiseHeight < minNoiseHeight) {
 				minNoiseHeight = noiseHeight;
 			}
+			*/
 
 			noiseMap[(y * imageSize) + x] = noiseHeight;
 		}
@@ -68,7 +74,8 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float s
 
 	for (int x = 0; x < imageSize; ++x) {
 		for (int y = 0; y < imageSize; ++y) {
-			noiseMap[x + (y * imageSize)] = inverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x + (y * imageSize)]);
+			noiseMap[x + (y * imageSize)] = inverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x + (y * imageSize)]), 0.0f, 1.0f;
+			noiseMap[x + (y * imageSize)] = std::max(0.0f, std::min(noiseMap[x + (y * imageSize)], 1.0f)); //clamp 01			
 			img->set_pixel(x, y, Color(noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)]));
 		}
 	}
@@ -83,6 +90,10 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffsetX, float s
 
 Ref<Image> NoiseGenerator::getImageSimple(int imageSize, Vector2 imageOffset, float scale) {
 	return getImage(imageSize, imageOffset, scale, 3, 0.5f, 2.0f);
+}
+
+void NoiseGenerator::getImageVoid(int imageSize, Vector2 imageOffset, float scale) {
+	getImage(imageSize, imageOffset, scale, 3, 0.5f, 2.0f);
 }
 
 //https://cs.nyu.edu/~perlin/noise/
