@@ -50,6 +50,7 @@ class Chunk : public MeshInstance {
 		PoolVector3Array _vertices;
 		PoolColorArray _colors;
 		bool redraw;
+
 	public:
 		Chunk();
 		Chunk(float x, float z, int desiredSize);
@@ -58,6 +59,8 @@ class Chunk : public MeshInstance {
 		void _update();
 		void _ready();
 		void _draw();
+
+		Array DrawFace(Vector<Vector3> verteces);
 
 		float xPos, zPos;
 
