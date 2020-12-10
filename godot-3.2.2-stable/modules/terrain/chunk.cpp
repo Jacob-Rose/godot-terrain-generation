@@ -110,50 +110,62 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 			{
 				newQuad.resize(0);
 				
-				newQuad.push_back(Vector3(x * 2, 1, -y * 2));
-				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y).r * 5, -y * 2));
-				newQuad.push_back(Vector3(x * 2, heightMap->get_pixel(x, y-1).r * 5, -(y - 1) * 2));
-				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y-1).r * 5, -(y - 1) * 2));
-				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad));
+				newQuad.push_back(Vector3(x * 2, heightMap->get_pixel(x + 1, y).r * 5, y * 2));
+				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x + 1, y).r * 5, y * 2));
+				newQuad.push_back(Vector3(x * 2, heightMap->get_pixel(x + 1, y).r * 5, (y + 1) * 2));
+				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x + 1, y).r * 5, (y + 1) * 2));
+				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad,0));
+				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 1));
 				convert.clear();
 				convert << "surface"+iD;
 				a->surface_set_name(iD, convert.str().c_str());			
 				iD++;
 			}
 		}
-
-	//	//Draw Face here
 	}
 
+	//	//Draw Face here
 	if (this != NULL)
 		this->set_mesh(a);
 }
 
-Array Chunk::DrawFace(Vector<Vector3> verteces)
+Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 {
 	Array mesh_array;
 
 	vertices.resize(0);
 	colors.resize(0);
 
-	vertices.push_back(verteces[0]);
-	vertices.push_back(verteces[3]);
-	vertices.push_back(verteces[2]);
-	vertices.push_back(verteces[0]);
-	vertices.push_back(verteces[1]);
-	vertices.push_back(verteces[3]);
+	switch (i) {
 
+		case 0:
+			vertices.push_back(verteces[0]);
+			vertices.push_back(verteces[3]);
+			vertices.push_back(verteces[2]);
+			break;
 
+			case 1:
+			vertices.push_back(verteces[0]);
+			vertices.push_back(verteces[1]);
+			vertices.push_back(verteces[3]);
+
+			break;
+
+	}
+	
 	colors.push_back(Color(0.86, 0.08, 0.24, 1));
 	colors.push_back(Color(0.86, 0.08, 0.24, 1));
 	colors.push_back(Color(0.86, 0.08, 0.24, 1));
-	colors.push_back(Color(0.86, 0.08, 0.24, 1));
-	colors.push_back(Color(0.86, 0.08, 0.24, 1));
-	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+
+	for (int i = 0; i < vertices.size();i++) {
+		indeces.push_back(i);
+	}
+
 
 	mesh_array.resize(ArrayMesh::ARRAY_MAX);
 	
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
+	mesh_array[ArrayMesh::ARRAY_INDEX] = indeces;
 	mesh_array[ArrayMesh::ARRAY_COLOR] = colors;
 
 	return mesh_array;

@@ -51,10 +51,9 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 		Chunk *chunk = new Chunk(playerPos);
 		NoiseGenerator *noiseMap = new NoiseGenerator();
-
 		//Generate
-		chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,1,1.0f,1.0f));
-		add_child(chunk);	
+		chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,3,0.5f,2.0f));
+		add_child(chunk);
 		chunk->set_translation(chunk->get_translation() + chunkOffset);
 
 		printf("Chunk spawned");
