@@ -26,10 +26,12 @@ class Chunk : public MeshInstance {
 		//original
 		PoolVector3Array vertices;
 		PoolColorArray colors;
+		PoolIntArray indeces;
 
 		//updated
 		PoolVector3Array _vertices;
 		PoolColorArray _colors;
+
 		bool redraw;
 
 		int iD;
@@ -44,7 +46,7 @@ class Chunk : public MeshInstance {
 		void _ready();
 		void _draw();
 
-		Array DrawFace(Vector<Vector3> verteces);
+		Array DrawFace(Vector<Vector3> verteces,int i);
 
 		void generateTerrainMesh(Ref<Image> heightMap);
 };
