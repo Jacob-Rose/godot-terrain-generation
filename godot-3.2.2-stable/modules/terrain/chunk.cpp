@@ -25,14 +25,14 @@ void Chunk::_notification(int p_what) {
 Chunk::Chunk()
 {
 	redraw = false;
-	chunkSize = 0.0f;
 	set_process(true);
+	chunkPos = Vector3(0, 0, 0);
 }
 
-Chunk::Chunk(float x, float z, int desiredSize) {
+Chunk::Chunk(Vector3 position) {
 	set_process(true);
 	redraw = false;
-	chunkSize = desiredSize;
+	chunkPos = position;
 }
 
 void Chunk::_update()
@@ -109,11 +109,16 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap) {
 			if (y != 0 && x != width - 1)
 			{
 				newQuad.resize(0);
+				
 				newQuad.push_back(Vector3(x * 2, 1, -y * 2));
 				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y).r * 5, -y * 2));
 				newQuad.push_back(Vector3(x * 2, heightMap->get_pixel(x, y-1).r * 5, -(y - 1) * 2));
 				newQuad.push_back(Vector3((x + 1) * 2, heightMap->get_pixel(x+1, y-1).r * 5, -(y - 1) * 2));
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad));
+				convert.clear();
+				convert << "surface"+iD;
+				a->surface_set_name(iD, convert.str().c_str());			
+				iD++;
 			}
 		}
 
@@ -139,14 +144,15 @@ Array Chunk::DrawFace(Vector<Vector3> verteces)
 	vertices.push_back(verteces[3]);
 
 
-	colors.push_back(Color(1, 1, 1));
-	colors.push_back(Color(1, 1, 1));
-	colors.push_back(Color(1, 1, 1));
-	colors.push_back(Color(1, 1, 1));
-	colors.push_back(Color(1, 1, 1));
-	colors.push_back(Color(1, 1, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
+	colors.push_back(Color(0.86, 0.08, 0.24, 1));
 
 	mesh_array.resize(ArrayMesh::ARRAY_MAX);
+	
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
 	mesh_array[ArrayMesh::ARRAY_COLOR] = colors;
 

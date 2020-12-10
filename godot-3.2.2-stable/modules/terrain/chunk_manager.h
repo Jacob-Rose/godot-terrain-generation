@@ -43,7 +43,7 @@ class ChunkManager : public Node {
 	//	void _process(float delta);
 		void _update();
 		void _ready();
-		void createChunk(Vector3 playerPos,int desiredChunks);
+		void createChunk(Vector3 playerPos,Vector3 chunkOffset);
 		bool checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 		Vector2 getCentralChunkLocation();
 

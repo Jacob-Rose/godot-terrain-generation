@@ -32,9 +32,12 @@ class Chunk : public MeshInstance {
 		PoolColorArray _colors;
 		bool redraw;
 
+		int iD;
+		Vector3 chunkPos;
+
 	public:
 		Chunk();
-		Chunk(float x, float z, int desiredSize);
+		Chunk(Vector3 position);
 
 		//	void _process(float delta);
 		void _update();
@@ -44,8 +47,6 @@ class Chunk : public MeshInstance {
 		Array DrawFace(Vector<Vector3> verteces);
 
 		void generateTerrainMesh(Ref<Image> heightMap);
-		int chunkSize;
-		
 };
 
 

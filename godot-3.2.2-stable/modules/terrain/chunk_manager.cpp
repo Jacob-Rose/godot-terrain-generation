@@ -46,21 +46,18 @@ void ChunkManager::_ready() {
 	
 }
 
-void ChunkManager::createChunk(Vector3 playerPos,int desiredChunks) {
+void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
-	for (int i = 0; i < desiredChunks; i++) {
-		Chunk *chunk = new Chunk(0, 1, 0);
+
+		Chunk *chunk = new Chunk(playerPos);
 		NoiseGenerator *noiseMap = new NoiseGenerator();
-		//chunk->set_mesh(mySimpleMesh);
-		for (int j = 0; j < 1; j++) {
-			//createCube(chunk, 0, 1, 0);
-			chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,1,1.0f,1.0f));
-			add_child(chunk);
-			printf("Cube spawned");
-		}
+
+		//Generate
+		chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,1,1.0f,1.0f));
+		add_child(chunk);	
+		chunk->set_translation(chunk->get_translation() + chunkOffset);
 
 		printf("Chunk spawned");
-	}
 }
 
 
