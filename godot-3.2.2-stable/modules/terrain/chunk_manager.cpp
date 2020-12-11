@@ -29,6 +29,9 @@ ChunkManager::ChunkManager()
 	//newSource = ResourceLoader::load("res://Floor.tcsn");
 	locationOfCentralChunk = Vector2(0, 0);
 	set_process(true);
+
+	colorGradient.add_point(0.0f, Color(0, 0, 0));
+	colorGradient.add_point(1.0f, Color(1.0f, 1.0f, 1.0f));
 }
 ChunkManager::~ChunkManager() {
 	
