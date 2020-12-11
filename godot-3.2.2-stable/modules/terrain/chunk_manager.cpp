@@ -49,10 +49,12 @@ void ChunkManager::_ready() {
 void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 
-		Chunk *chunk = new Chunk(playerPos);
-		NoiseGenerator *noiseMap = new NoiseGenerator();
+		Chunk* chunk = memnew(Chunk, playerPos); //TODO memory leak?
+		Ref<NoiseGenerator> noiseMap = memnew(NoiseGenerator);
 		//Generate
-		chunk->generateTerrainMesh(noiseMap->getImage(10, Vector2(0, 0), 1,3,0.5f,2.0f));
+
+		Ref<Image> image = noiseMap->getImage(25, Vector2(chunkOffset.x, chunkOffset.y), 100.0f, 3, 3.0f, 2.0f);
+		chunk->generateTerrainMesh(image);
 		add_child(chunk);
 		chunk->set_translation(chunk->get_translation() + chunkOffset);
 

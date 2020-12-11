@@ -79,7 +79,7 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float sc
 			img->set_pixel(x, y, Color(noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)]));
 		}
 	}
-
+	img->unlock();
 	delete[] noiseMap;
 	delete[] octaveOffsets;
 

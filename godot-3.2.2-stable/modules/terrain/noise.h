@@ -19,6 +19,7 @@ class NoiseGenerator : public Reference {
 		Ref<Image> getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
 		Ref<Image> getImageSimple(int imageSize, Vector2 imageOffset, float scale);
 		void getImageVoid(int imageSize, Vector2 imageOffset, float scale);
+		//Ref<Image> getColorFromHeightmap(Ref<Image> heightMap, )
 
 		float fade(float t);
 		float lerp(float a, float b, float t);

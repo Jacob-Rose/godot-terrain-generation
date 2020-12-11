@@ -15,7 +15,7 @@ func _ready():
 	#create_chunk(Vector3(0,0,0), 1)
 	Blocks = []
 	Player = get_node("player")
-	makeNewChunk(CurrentLocationOfChunk)
+	#makeNewChunk(CurrentLocationOfChunk)
 	pass # Replace with function body.
 
 
@@ -25,17 +25,12 @@ func _process(delta):
 	
 	FunkyDelta += delta
 	
-	if FunkyDelta >= 2 and not HasCame:
+	if FunkyDelta >= 10 and not HasCame:
 		print("Here")
 		create_chunk(Vector3(Player.translation.x,1,Player.translation.z), Vector3(-10,0,10))
 		HasCame = true
 	
 	var children = get_children()
-	
-	for child in children:
-		if child is Chunk:
-			#remove_child(child)
-			print("Oh yeah")
 	
 	#if needsToBeReloaded:
 	#	makeNewChunk(get_central_chunk_location())
