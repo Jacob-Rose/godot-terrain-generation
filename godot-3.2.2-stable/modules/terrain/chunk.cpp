@@ -88,6 +88,8 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap) {
 		}
 	}
 	mColorMap->unlock();
+	set_material_override(a->surface_get_material(0));
+	a->regen_normalmaps();
 	//	//Draw Face here
 	if (this != NULL)
 		this->set_mesh(a);
@@ -99,6 +101,8 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 
 	vertices.resize(0);
 	colors.resize(0);
+	uvs.resize(0);
+	normals.resize(0);
 
 	switch (i) {
 
@@ -109,6 +113,14 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			colors.push_back(mColorMap->get_pixel(verteces[3].x, verteces[3].y));
 			vertices.push_back(verteces[2]);
 			colors.push_back(mColorMap->get_pixel(verteces[2].x, verteces[2].y));
+
+			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
+			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
+			uvs.push_back(Vector2(verteces[2].x / 3.0, verteces[2].z / 3.0));
+
+			normals.push_back(verteces[1]);
+			normals.push_back(verteces[2]);
+			normals.push_back(verteces[3]);
 			break;
 
 		case 1:
@@ -119,6 +131,13 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			vertices.push_back(verteces[3]);
 			colors.push_back(mColorMap->get_pixel(verteces[3].x, verteces[3].y));
 
+			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
+			uvs.push_back(Vector2(verteces[1].x / 3.0, verteces[1].z / 3.0));
+			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
+
+			normals.push_back(verteces[1]);
+			normals.push_back(verteces[0]);
+			normals.push_back(verteces[2]);
 			break;
 
 	}
@@ -130,10 +149,14 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 
 
 	mesh_array.resize(ArrayMesh::ARRAY_MAX);
-	
+
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
-	mesh_array[ArrayMesh::ARRAY_INDEX] = indeces;
+	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
+	mesh_array[ArrayMesh::ARRAY_NORMAL] = normals;
 	mesh_array[ArrayMesh::ARRAY_COLOR] = colors;
+
+	mesh_array[ArrayMesh::ARRAY_INDEX] = indeces;
+
 
 	return mesh_array;
 }
