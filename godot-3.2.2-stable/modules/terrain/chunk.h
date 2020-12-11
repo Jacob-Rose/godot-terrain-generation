@@ -25,6 +25,8 @@ class Chunk : public MeshInstance {
 
 		//original
 		PoolVector3Array vertices;
+		PoolVector3Array normals;
+		PoolVector2Array uvs;
 		PoolColorArray colors;
 		PoolIntArray indeces;
 
