@@ -7,7 +7,7 @@ void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("get_central_chunk_location"), &ChunkManager::getCentralChunkLocation);
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
-	ClassDB::bind_method(D_METHOD("creaet_chunk", "player_2d_position","size_chunk"), &ChunkManager::checkIfChunksNeedToBeReloaded);
+	//ClassDB::bind_method(D_METHOD("create_chunk", "player_2d_position","size_chunk"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 	ClassDB::bind_method(D_METHOD("create_chunk", "Playerpos", "aqui"), &ChunkManager::createChunk);
 }
 
@@ -26,9 +26,12 @@ void ChunkManager::_notification(int p_what) {
 
 ChunkManager::ChunkManager()
 {
-	newSource = ResourceLoader::load("res://Floor.tcsn");
+	//newSource = ResourceLoader::load("res://Floor.tcsn");
 	locationOfCentralChunk = Vector2(0, 0);
 	set_process(true);
+}
+ChunkManager::~ChunkManager() {
+	
 }
 //Pretty sure dont need this since we have our own custom _update function now
 /*void ChunkManager::_process(float delta)
@@ -50,15 +53,18 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 
 		Chunk* chunk = memnew(Chunk, playerPos); //TODO memory leak?
-		Ref<NoiseGenerator> noiseMap = memnew(NoiseGenerator);
-		//Generate
 
-		Ref<Image> image = noiseMap->getImage(25, Vector2(chunkOffset.x, chunkOffset.y), 100.0f, 3, 3.0f, 2.0f);
-		chunk->generateTerrainMesh(image);
+		NoiseGenerator* noiseGen = new NoiseGenerator();
+		PoolRealArray heightmap = noiseGen->getHeightmap(noiseImageSize, Vector2(chunkOffset.x, chunkOffset.y), noiseImageScale, noiseImageOctaves, noiseImagePersistance, noiseImageLacunarity);
+
+		Ref<Image> colorMap = noiseGen->getColorFromHeightmap(heightmap, noiseImageSize, colorGradient);
+
+		chunk->generateTerrainMesh(heightmap, noiseImageSize);
 		add_child(chunk);
 		chunk->set_translation(chunk->get_translation() + chunkOffset);
 
 		printf("Chunk spawned");
+		delete noiseGen;
 }
 
 

@@ -13,6 +13,7 @@
 #include "chunk.h"
 #include "noise.h"
 #include "core/resource.h"
+#include <scene/resources/gradient.h>
 
 class ChunkManager : public Node {
 	GDCLASS(ChunkManager, Node);
@@ -32,13 +33,12 @@ class ChunkManager : public Node {
 		Vector3 meshArray[6];
 		const float LENGTH_OF_SQUARE = 10.0f;
 		Vector2 locationOfCentralChunk;
-		
-		Ref<Resource> newSource;
 
-		NoiseGenerator noiseGenerator;
+		Gradient colorGradient;
 
 	public:
 		ChunkManager();
+		~ChunkManager();
 
 	//	void _process(float delta);
 		void _update();
@@ -48,6 +48,12 @@ class ChunkManager : public Node {
 		Vector2 getCentralChunkLocation();
 
 		int numberOfChunks = 1;
+
+		int noiseImageSize = 25;
+		float noiseImageScale = 100.0f;
+		int noiseImageOctaves = 3;
+		float noiseImagePersistance = 2.5f;
+		float noiseImageLacunarity = 2.0f;
 };
 
 

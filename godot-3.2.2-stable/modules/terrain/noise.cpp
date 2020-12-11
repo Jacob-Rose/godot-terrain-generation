@@ -9,30 +9,25 @@
 #include "PerlinNoise.hpp"
 
 void NoiseGenerator::_bind_methods() {
-	//ClassDB::bind_method(D_METHOD("createImage"), &NoiseGenerator::createImage);
-	ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImageSimple);
-	ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getImage);
+	ClassDB::bind_method(D_METHOD("getHeightmap", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getHeightmap);
+	//ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImageSimple);
+	//ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getImage);
 }
 
 NoiseGenerator::NoiseGenerator() {
-
 
 }
 
 
 //Based of Sebastian Lague tutorial in Unity https://www.youtube.com/watch?v=MRNFcywkUSA&t=568s
-Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity) {
-	
-	Ref<Image> img = memnew(Image);
-	img->create(imageSize, imageSize, false, Image::Format::FORMAT_RGBA8);
-	img->lock();
-	
+PoolRealArray NoiseGenerator::getHeightmap(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity) {
 	siv::PerlinNoise noiseGen;
 	noiseGen.reseed(1234); //or any seed
 	
 	Vector2* octaveOffsets = new Vector2[octaves];
 
-	float *noiseMap = new float[imageSize * imageSize];
+	PoolRealArray noiseMap = PoolRealArray();
+	noiseMap.resize(imageSize * imageSize);
 
 	for (short i = 0; i < octaves; ++i) {
 		octaveOffsets[i].x = (randFloat01() * 20000.0f) - 10000.0f;
@@ -68,32 +63,32 @@ Ref<Image> NoiseGenerator::getImage(int imageSize, Vector2 imageOffset, float sc
 			}
 			*/
 
-			noiseMap[(y * imageSize) + x] = noiseHeight;
+			noiseMap.set((y * imageSize) + x, noiseHeight);
 		}
 	}
 
 	for (int x = 0; x < imageSize; ++x) {
 		for (int y = 0; y < imageSize; ++y) {
-			noiseMap[x + (y * imageSize)] = inverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x + (y * imageSize)]), 0.0f, 1.0f;
-			noiseMap[x + (y * imageSize)] = std::max(0.0f, std::min(noiseMap[x + (y * imageSize)], 1.0f)); //clamp 01			
-			img->set_pixel(x, y, Color(noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)], noiseMap[x + (y * imageSize)]));
+			noiseMap.set(x + (y * imageSize),inverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x + (y * imageSize)]));
+			noiseMap.set(x + (y * imageSize),std::max(0.0f, std::min(noiseMap[x + (y * imageSize)], 1.0f))); //clamp 01			
 		}
 	}
-	img->unlock();
-	delete[] noiseMap;
 	delete[] octaveOffsets;
 
-	return img;
-	
-	return nullptr;
+	return noiseMap;
 }
 
-Ref<Image> NoiseGenerator::getImageSimple(int imageSize, Vector2 imageOffset, float scale) {
-	return getImage(imageSize, imageOffset, scale, 3, 0.5f, 2.0f);
-}
-
-void NoiseGenerator::getImageVoid(int imageSize, Vector2 imageOffset, float scale) {
-	getImage(imageSize, imageOffset, scale, 3, 0.5f, 2.0f);
+Ref<Image> NoiseGenerator::getColorFromHeightmap(PoolRealArray heightMap, int heightMapSize, Gradient& colorMap) {
+	Ref<Image> colorImg = memnew(Image);
+	colorImg->create(heightMapSize, heightMapSize, false, Image::Format::FORMAT_RGB8);
+	colorImg->lock();
+	for (int x = 0; x < heightMapSize; ++x) {
+		for (int y = 0; y < heightMapSize; ++y) {
+			colorImg->set_pixel(x, y, colorMap.get_color_at_offset(heightMap[x + (y * heightMapSize)]));
+		}
+	}
+	colorImg->unlock();
+	return colorImg;
 }
 
 //https://cs.nyu.edu/~perlin/noise/

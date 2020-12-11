@@ -35,6 +35,8 @@ class Chunk : public MeshInstance {
 		int iD;
 		Vector3 chunkPos;
 
+		Ref<Image> mColorMap;
+
 		void construct(Vector3 pos);
 
 	public:
@@ -50,7 +52,13 @@ class Chunk : public MeshInstance {
 
 		Array DrawFace(Vector<Vector3> verteces,int i);
 
-		void generateTerrainMesh(Ref<Image> heightMap);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="heightMap"></param>
+		/// <param name="heightMapSize">The size of one side of the 2D heightmap, e.x. 25 == 25 * 25 size array</param>
+		void generateTerrainMesh(PoolRealArray heightMap, int heightMapSize);
+		void generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap);
 };
 
 

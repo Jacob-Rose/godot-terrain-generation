@@ -7,6 +7,7 @@
 #include <core/image.h>
 #include <vector>
 #include <core/reference.h>
+#include <scene/resources/gradient.h>
 
 //https://solarianprogrammer.com/2012/07/18/perlin-noise-cpp-11/
 class NoiseGenerator : public Reference {
@@ -16,10 +17,21 @@ class NoiseGenerator : public Reference {
 	public:
 		NoiseGenerator();
 
-		Ref<Image> getImage(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
-		Ref<Image> getImageSimple(int imageSize, Vector2 imageOffset, float scale);
-		void getImageVoid(int imageSize, Vector2 imageOffset, float scale);
-		//Ref<Image> getColorFromHeightmap(Ref<Image> heightMap, )
+
+		/// <summary>
+		/// Returns heightmap in a 1D array
+		/// Access the right pixel by using (y * imageSize) + x
+		/// </summary>
+		/// <param name="imageSize">size of heightmap | size * size </param>
+		/// <param name="imageOffset">offset of noise</param>
+		/// <param name="scale">base is 100</param>
+		/// <param name="octaves">number of interations / complexity</param>
+		/// <param name="persistance">how much each octave affects the image</param>
+		/// <param name="lacunarity">something else</param>
+		/// <returns></returns>
+		PoolRealArray getHeightmap(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
+		Ref<Image> getColorFromHeightmap(PoolRealArray heightMap, int heightMapSize, Gradient& colorMap);
+
 
 		float fade(float t);
 		float lerp(float a, float b, float t);
