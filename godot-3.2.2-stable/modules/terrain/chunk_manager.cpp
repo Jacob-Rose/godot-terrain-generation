@@ -62,9 +62,8 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 		Ref<Image> colorMap = noiseGen->getColorFromHeightmap(heightmap, noiseImageSize, colorGradient);
 
-		chunk->generateTerrainMesh(heightmap, noiseImageSize);
+		chunk->generateTerrainMesh(heightmap, noiseImageSize, playerPos);
 		add_child(chunk);
-		chunk->set_translation(chunk->get_translation() + chunkOffset);
 
 		printf("Chunk spawned");
 		delete noiseGen;

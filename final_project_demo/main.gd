@@ -25,9 +25,9 @@ func _process(delta):
 	
 	FunkyDelta += delta
 	
-	if FunkyDelta >= 10 and not HasCame:
+	if FunkyDelta >= 2 and not HasCame:
 		print("Here")
-		create_chunk(Vector3(Player.translation.x,1,Player.translation.z), Vector3(-10,0,10))
+		create_chunk(Vector3(Player.translation.x,1,Player.translation.z), Vector3(-50,0,-50))
 		HasCame = true
 	
 	var children = get_children()
