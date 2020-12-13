@@ -54,6 +54,8 @@ class Chunk : public MeshInstance {
 
 		Array DrawFace(Vector<Vector3> verteces,int i);
 
+		Vector2 checkOutOfBounds(int i, Vector<Vector3> verteces);
+
 		/// <summary>
 		/// 
 		/// </summary>

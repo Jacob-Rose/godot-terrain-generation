@@ -49,7 +49,7 @@ class ChunkManager : public Node {
 
 		int numberOfChunks = 1;
 
-		int noiseImageSize = 25;
+		int noiseImageSize = 10;
 		float noiseImageScale = 100.0f;
 		int noiseImageOctaves = 3;
 		float noiseImagePersistance = 2.5f;

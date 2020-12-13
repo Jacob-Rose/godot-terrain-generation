@@ -70,10 +70,12 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 	Vector3 offset = Vector3(-25 + generatedPosition.x, 0, -25 + generatedPosition.z); 
 	mColorMap = colorMap;
 	mColorMap->lock();
-	for (int y = 0; y < colorMap->get_height(); y++) {
+	for (int y = 1; y < colorMap->get_height(); y++) {
 		for (int x = 0; x < colorMap->get_width(); x++) {
-			if (y != 0 && x != colorMap->get_width() - 1) {
+			if (x != colorMap->get_width() - 1) {
+				newQuad.clear();
 				newQuad.resize(0);
+			
 				float heightVal = heightMap[(x) + (y * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
@@ -105,15 +107,21 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 	uvs.resize(0);
 	normals.resize(0);
 
+	Vector2 vert0 = checkOutOfBounds(0, verteces);
+	Vector2 vert1 = checkOutOfBounds(1, verteces);
+	Vector2 vert2 = checkOutOfBounds(2, verteces);
+	Vector2 vert3 = checkOutOfBounds(3, verteces);
+
 	switch (i) {
 
 		case 0:
+	
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(verteces[0].x, verteces[0].y));
+			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(verteces[3].x, verteces[3].y));
+			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
 			vertices.push_back(verteces[2]);
-			colors.push_back(mColorMap->get_pixel(verteces[2].x, verteces[2].y));
+			colors.push_back(mColorMap->get_pixel(vert2.x, vert2.y));
 
 			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
 			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
@@ -126,11 +134,11 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 
 		case 1:
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(verteces[0].x, verteces[0].y));
+			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
 			vertices.push_back(verteces[1]);
-			colors.push_back(mColorMap->get_pixel(verteces[1].x, verteces[1].y));
+			colors.push_back(mColorMap->get_pixel(vert1.x, vert1.y));
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(verteces[3].x, verteces[3].y));
+			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
 
 			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
 			uvs.push_back(Vector2(verteces[1].x / 3.0, verteces[1].z / 3.0));
@@ -160,4 +168,23 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 
 
 	return mesh_array;
+}
+
+Vector2 Chunk::checkOutOfBounds(int i, Vector<Vector3> verteces) {
+	Vector2 vector;
+	vector.x = Math::abs(verteces[i].x);
+	vector.y = Math::abs(verteces[i].y);
+
+	if (vector.x >= mColorMap->get_size().x) {
+		vector.x -= 1;
+	} else if (vector.x <= 0) {
+		vector.x += 1;
+	}
+	if (vector.y >= mColorMap->get_size().y) {
+		vector.y -= 1;
+	} else if (vector.y <= 0) {
+		vector.y += 1;
+	}
+	
+	return vector;
 }
