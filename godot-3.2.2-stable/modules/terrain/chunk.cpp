@@ -67,7 +67,7 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, int heightMapSize, Vect
 void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Vector3 generatedPosition) {
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
 	Vector<Vector3> newQuad;
-	Vector3 offset = Vector3(-25 + generatedPosition.x, 0, -25 + generatedPosition.z); 
+	Vector3 offset = Vector3(-colorMap->get_height() + generatedPosition.x, 0, -colorMap->get_height() + generatedPosition.z); 
 	mColorMap = colorMap;
 	mColorMap->lock();
 	for (int y = 1; y < colorMap->get_height(); y++) {
@@ -78,8 +78,11 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 			
 				float heightVal = heightMap[(x) + (y * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
+				heightVal = heightMap[(x + 1) + (y * colorMap->get_height())];
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
+				heightVal = heightMap[(x) + ((y + 1) * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
+				heightVal = heightMap[(x + 1) + ((y + 1) * colorMap->get_height())];
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 0));
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 1));
