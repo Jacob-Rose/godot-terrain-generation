@@ -3,6 +3,7 @@
 #include "chunk.h"
 #include "scene/main/viewport.h" //used to get mouse position in _process(float)
 #include <sstream>
+#include <string>
 #include "noise.h"
 
 void Chunk::_bind_methods() {
@@ -76,13 +77,13 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 				newQuad.clear();
 				newQuad.resize(0);
 			
-				float heightVal = heightMap[(x) + (y * colorMap->get_height())];
+				float heightVal = heightMap[(x) + ((10 - y) * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
-				heightVal = heightMap[(x + 1) + (y * colorMap->get_height())];
+				heightVal = heightMap[(x + 1) + ((10 - y) * colorMap->get_height())];
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
-				heightVal = heightMap[(x) + ((y + 1) * colorMap->get_height())];
+				heightVal = heightMap[(x) + (((10 - y) - 1) * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
-				heightVal = heightMap[(x + 1) + ((y + 1) * colorMap->get_height())];
+				heightVal = heightMap[(x + 1) + (((10 - y) - 1) * colorMap->get_height())];
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 0));
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 1));
