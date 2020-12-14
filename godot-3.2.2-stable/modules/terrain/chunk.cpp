@@ -76,7 +76,8 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 			if (x != colorMap->get_width() - 1) {
 				newQuad.clear();
 				newQuad.resize(0);
-			
+
+				//Create the four new vertices 
 				float heightVal = heightMap[(x) + ((10 - y) * colorMap->get_height())];
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
 				heightVal = heightMap[(x + 1) + ((10 - y) * colorMap->get_height())];
@@ -85,8 +86,12 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
 				heightVal = heightMap[(x + 1) + (((10 - y) - 1) * colorMap->get_height())];
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
+
+				//Create each face
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 0));
 				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 1));
+
+				//set the name of the surfaces
 				a->surface_set_name(iD, String(std::to_string(iD).c_str()) + "Tri1");
 				iD++;
 				a->surface_set_name(iD, String(std::to_string(iD).c_str()) + "Tri2");
@@ -119,24 +124,8 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 	switch (i) {
 
 		case 0:
-	
-			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
-			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
-			vertices.push_back(verteces[2]);
-			colors.push_back(mColorMap->get_pixel(vert2.x, vert2.y));
-
-			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
-			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
-			uvs.push_back(Vector2(verteces[2].x / 3.0, verteces[2].z / 3.0));
-
-			normals.push_back(verteces[1]);
-			normals.push_back(verteces[2]);
-			normals.push_back(verteces[3]);
-			break;
-
-		case 1:
+			//Push vertices in a clockwise motion, top left, top right, bottom right
+			//create essentially the first triangle
 			vertices.push_back(verteces[0]);
 			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
 			vertices.push_back(verteces[1]);
@@ -144,23 +133,44 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			vertices.push_back(verteces[3]);
 			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
 
+			//set the uvs
 			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
 			uvs.push_back(Vector2(verteces[1].x / 3.0, verteces[1].z / 3.0));
 			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
 
+			//normals
 			normals.push_back(verteces[1]);
 			normals.push_back(verteces[0]);
 			normals.push_back(verteces[2]);
 			break;
 
+		case 1:
+			//Push vertices in a clockwise motion, bottom right, bottom left, top left
+			//create essentially the second triangle
+			vertices.push_back(verteces[3]);
+			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
+			vertices.push_back(verteces[2]);
+			colors.push_back(mColorMap->get_pixel(vert2.x, vert2.y));
+			vertices.push_back(verteces[0]);
+			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
+
+			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
+			uvs.push_back(Vector2(verteces[2].x / 3.0, verteces[2].z / 3.0));
+			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
+
+			normals.push_back(verteces[2]);
+			normals.push_back(verteces[3]);
+			normals.push_back(verteces[1]);
+			break;
+
 	}
 	
-
+	//set the indeces of the mesharray
 	for (int i = 0; i < vertices.size();i++) {
 		indeces.push_back(i);
 	}
 
-
+	//resize then set the mesh array with each appropriate data into the array.
 	mesh_array.resize(ArrayMesh::ARRAY_MAX);
 
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
@@ -179,6 +189,7 @@ Vector2 Chunk::checkOutOfBounds(int i, Vector<Vector3> verteces) {
 	vector.x = Math::abs(verteces[i].x);
 	vector.y = Math::abs(verteces[i].y);
 
+	//These should help with making sure the values wont be out of bounds when we sample
 	if (vector.x >= mColorMap->get_size().x) {
 		vector.x -= 1;
 	} else if (vector.x <= 0) {
