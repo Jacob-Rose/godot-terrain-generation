@@ -96,11 +96,6 @@ Ref<Image> NoiseGenerator::getColorFromHeightmap(Ref<Image> heightMap, int heigh
 	return colorImg;
 }
 
-Ref<Image> NoiseGenerator::getColorHeightmap(int imageSize, Vector2 imageOffset, Ref<Gradient> colorMap) {
-	Ref<Image> arr = getHeightmap(imageSize, imageOffset, 100.0f, 3, 0.85f, 2.5f);
-	return getColorFromHeightmap(arr, imageSize, *(colorMap.ptr()));
-}
-
 //https://cs.nyu.edu/~perlin/noise/
 float NoiseGenerator::fade(float t) {
 	return t * t * t * (t * (t * 6 - 15) + 10);
