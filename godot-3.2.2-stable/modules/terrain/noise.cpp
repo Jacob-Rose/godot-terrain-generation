@@ -66,16 +66,19 @@ Ref<Image> NoiseGenerator::getHeightmap(int imageSize, Vector2 imageOffset, floa
 			noiseMap[(y * imageSize) + x] = noiseHeight;
 		}
 	}
-
+	Ref<Image> img = memnew(Image);
+	img->create(imageSize, imageSize, false, Image::Format::FORMAT_RGB8);
+	img->lock();
 	for (int x = 0; x < imageSize; ++x) {
 		for (int y = 0; y < imageSize; ++y) {
 			noiseMap[(y * imageSize) + x] = inverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x + (y * imageSize)]);
-			noiseMap[(y * imageSize) + x] = std::max(0.0f, std::min(noiseMap[x + (y * imageSize)], 1.0f)); //clamp 01			
+			noiseMap[(y * imageSize) + x] = std::max(0.0f, std::min(noiseMap[x + (y * imageSize)], 1.0f)); //clamp 01
+			img->set_pixel(x, y, Color(noiseMap[(y * imageSize) + x], noiseMap[(y * imageSize) + x], noiseMap[(y * imageSize) + x]));
 		}
 	}
 	delete[] octaveOffsets;
-
-	return noiseMap;
+	delete[] noiseMap;
+	return img;
 }
 
 Ref<Image> NoiseGenerator::getColorFromHeightmap(Ref<Image> heightMap, int heightMapSize, Gradient& colorMap) {
