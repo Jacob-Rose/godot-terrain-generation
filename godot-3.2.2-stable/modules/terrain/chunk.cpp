@@ -111,10 +111,12 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 {
 	Array mesh_array;
 
+	//resize which should make sure its empty before pushing back
 	vertices.resize(0);
 	colors.resize(0);
 	uvs.resize(0);
 	normals.resize(0);
+	indeces.resize(0);
 
 	Vector2 vert0 = checkOutOfBounds(0, verteces);
 	Vector2 vert1 = checkOutOfBounds(1, verteces);
@@ -134,9 +136,9 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
 
 			//set the uvs
-			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
-			uvs.push_back(Vector2(verteces[1].x / 3.0, verteces[1].z / 3.0));
-			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
+			uvs.push_back(Vector2(verteces[0].x * 0.333, verteces[0].z * 0.333));
+			uvs.push_back(Vector2(verteces[1].x * 0.333, verteces[1].z * 0.333));
+			uvs.push_back(Vector2(verteces[3].x * 0.333, verteces[3].z * 0.333));
 
 			//normals
 			normals.push_back(verteces[1]);
@@ -154,9 +156,9 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			vertices.push_back(verteces[0]);
 			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
 
-			uvs.push_back(Vector2(verteces[3].x / 3.0, verteces[3].z / 3.0));
-			uvs.push_back(Vector2(verteces[2].x / 3.0, verteces[2].z / 3.0));
-			uvs.push_back(Vector2(verteces[0].x / 3.0, verteces[0].z / 3.0));
+			uvs.push_back(Vector2(verteces[3].x * 0.333, verteces[3].z * 0.333));
+			uvs.push_back(Vector2(verteces[2].x * 0.333, verteces[2].z * 0.333));
+			uvs.push_back(Vector2(verteces[0].x * 0.333, verteces[0].z * 0.333));
 
 			normals.push_back(verteces[2]);
 			normals.push_back(verteces[3]);
