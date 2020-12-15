@@ -58,7 +58,7 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 		Chunk* chunk = memnew(Chunk, playerPos); //TODO memory leak?
 
 		NoiseGenerator* noiseGen = new NoiseGenerator();
-		PoolRealArray heightmap = noiseGen->getHeightmap(noiseImageSize, Vector2(chunkOffset.x, chunkOffset.y), noiseImageScale, noiseImageOctaves, noiseImagePersistance, noiseImageLacunarity);
+		PoolRealArray heightmap = noiseGen->getHeightmap(noiseImageSize, Vector2(chunkOffset.x * noiseImageScale, chunkOffset.y * noiseImageScale), noiseImageScale, noiseImageOctaves, noiseImagePersistance, noiseImageLacunarity);
 
 		Ref<Image> colorMap = noiseGen->getColorFromHeightmap(heightmap, noiseImageSize, colorGradient);
 

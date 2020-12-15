@@ -29,9 +29,9 @@ class NoiseGenerator : public Reference {
 		/// <param name="persistance">how much each octave affects the image</param>
 		/// <param name="lacunarity">something else</param>
 		/// <returns></returns>
-		PoolRealArray getHeightmap(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
-		Ref<Image> getColorFromHeightmap(PoolRealArray heightMap, int heightMapSize, Gradient& colorMap);
-
+		Ref<Image> getHeightmap(int imageSize, Vector2 imageOffset, float scale, int octaves, float persistance, float lacunarity);
+		Ref<Image> getColorFromHeightmap(Ref<Image> heightMap, int heightMapSize, Gradient& colorMap);
+		Ref<Image> getColorHeightmap(int imageSize, Vector2 imageOffset, Ref<Gradient> colorMap);
 
 		float fade(float t);
 		float lerp(float a, float b, float t);

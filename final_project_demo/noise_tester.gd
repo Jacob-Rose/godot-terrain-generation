@@ -17,10 +17,10 @@ var image
 var texture = ImageTexture.new()
 var offset = Vector2(0,0)
 var noiseGen = NoiseGenerator.new()
+var heightMap
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	image = noiseGen.getImage(imgSize, offset, imgScale, imgOctaves, imgPersistance, imgLacunarity)
-	
+	# heightMap = noiseGen.getImage(imgSize, offset, imgScale, imgOctaves, imgPersistance, imgLacunarity)
 	set_process(true)
 	set_process_input(true)
 	pass # Replace with function body.
@@ -31,9 +31,11 @@ func _draw():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	offset.y += delta * imgSpeed
-	
+	var gradient = Gradient.new()
+	gradient.add_point(0.0, Color.black)
+	gradient.add_point(1.0, Color.white)
 	#image = noiseGen.getImage(100, offset, imgZoom)
-	image = noiseGen.getImage(imgSize, offset, imgScale, imgOctaves, imgPersistance, imgLacunarity)
+	image = noiseGen.getColorHeightmap(imgSize, offset, gradient)
 	texture.create_from_image(image)
 	update()
 	pass
