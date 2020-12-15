@@ -55,10 +55,10 @@ func makeNewChunk(newPos):
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = originalLocation + Vector3(LengthOfSquare - 1,0,0)
-	playerLocation = originalLocation + Vector3((LengthOfSquare * 2) - 1,0,0)
+	newLocation = originalLocation - Vector3(0,0,(LengthOfSquare))
+	playerLocation = originalLocation + Vector3((LengthOfSquare * 2) - 2,0,0)
 	
-	#create_chunk(playerLocation, newLocation)
+	create_chunk(playerLocation, newLocation)
 	
 	
 	#var NewChunk = ChunkResource.instance()
