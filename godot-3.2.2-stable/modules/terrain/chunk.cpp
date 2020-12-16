@@ -59,18 +59,20 @@ void Chunk::_draw()
 
 }
 
-void Chunk::generateTerrainMesh(PoolRealArray heightMap, int heightMapSize, Vector3 generatedPosition) {
+void Chunk::generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition) {
 	Ref<Image> img = memnew(Image);
 	img->create(heightMapSize, heightMapSize, false, Image::Format::FORMAT_RGB8);
 	generateTerrainMesh(heightMap, img, generatedPosition);
 }
 
-void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Vector3 generatedPosition) {
+void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition) {
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
 	Vector<Vector3> newQuad;
 	Vector3 offset = Vector3(-colorMap->get_height() + generatedPosition.x, 0, -colorMap->get_height() + generatedPosition.z); 
 	mColorMap = colorMap;
+	mHeightMap = heightMap;
 	mColorMap->lock();
+	mHeightMap->lock();
 	for (int y = 1; y < colorMap->get_height(); y++) {
 		for (int x = 0; x < colorMap->get_width(); x++) {
 			if (x != colorMap->get_width() - 1) {
@@ -78,13 +80,13 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 				newQuad.resize(0);
 
 				//Create the four new vertices 
-				float heightVal = heightMap[(x) + ((10 - y) * colorMap->get_height())];
+				float heightVal = mHeightMap->get_pixel(x, 10 - y).r;
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
-				heightVal = heightMap[(x + 1) + ((10 - y) * colorMap->get_height())];
+				heightVal = mHeightMap->get_pixel(x + 1,10 - y).r;
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
-				heightVal = heightMap[(x) + (((10 - y) - 1) * colorMap->get_height())];
+				heightVal = mHeightMap->get_pixel(x,(10 - y) - 1).r;
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
-				heightVal = heightMap[(x + 1) + (((10 - y) - 1) * colorMap->get_height())];
+				heightVal = mHeightMap->get_pixel((x + 1),(10 - y) - 1).r;
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
 
 				//Create each face
@@ -100,6 +102,7 @@ void Chunk::generateTerrainMesh(PoolRealArray heightMap, Ref<Image> colorMap, Ve
 		}
 	}
 	mColorMap->unlock();
+	mHeightMap->unlock();
 	set_material_override(a->surface_get_material(0));
 	a->regen_normalmaps();
 	//	//Draw Face here

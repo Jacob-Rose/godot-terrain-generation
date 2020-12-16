@@ -10,7 +10,7 @@
 
 void NoiseGenerator::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("getHeightmap", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getHeightmap);
-	ClassDB::bind_method(D_METHOD("getColorHeightmap", "mapSize", "offset", "colorMap"), &NoiseGenerator::getColorHeightmap);
+	//ClassDB::bind_method(D_METHOD("getColorHeightmap", "mapSize", "offset", "colorMap"), &NoiseGenerator::getColorHeightmap);
 	//ClassDB::bind_method(D_METHOD("getImageSimple", "imageSize", "imageOffset", "scale"), &NoiseGenerator::getImageSimple);
 	//ClassDB::bind_method(D_METHOD("getImage", "imageSize", "imageOffset", "scale", "octaves", "persistance", "lacunarity"), &NoiseGenerator::getImage);
 }

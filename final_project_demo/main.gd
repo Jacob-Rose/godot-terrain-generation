@@ -55,59 +55,44 @@ func makeNewChunk(newPos):
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = originalLocation + Vector3(LengthOfSquare - 1,0,0)
-	playerLocation = originalLocation + Vector3((LengthOfSquare * 2) - 1,0,0)
+	newLocation = Vector3(0.01,0,0)
+	playerLocation = Vector3(18,0,0)
 	
 	create_chunk(playerLocation, newLocation)
 	
+	newLocation = Vector3 (-0.01,0,0)
+	playerLocation = Vector3(-18,0,0)
 	
-	#var NewChunk = ChunkResource.instance()
-	#NewChunk.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#Blocks.append(self.add_child(NewChunk))
+	create_chunk(playerLocation, newLocation)
 	
+	newLocation = Vector3(0,0.01,0)
+	playerLocation = Vector3(0,0,-18)
 	
-	#var NewChunk2 = ChunkResource.instance()
-	#NewChunk2.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk2.transform.origin.x += LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk2))
+	create_chunk(playerLocation, newLocation)
 	
-	#var NewChunk3 = ChunkResource.instance()
-	#NewChunk3.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk3.transform.origin.x -= LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk3))
+	newLocation = Vector3(0,-0.01,0)
+	playerLocation = Vector3(0,0,18)
 	
-	#var NewChunk4 = ChunkResource.instance()
-	#NewChunk4.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk4.transform.origin.z -= LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk4))
+	create_chunk(playerLocation, newLocation)
 	
-	#var NewChunk5 = ChunkResource.instance()
-	#NewChunk5.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk5.transform.origin.z += LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk5))
+	newLocation = Vector3(0.01,-0.01,0)
+	playerLocation = Vector3(18,0,18)
 	
-	#var NewChunk6 = ChunkResource.instance()
-	#NewChunk6.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk6.transform.origin.z += LengthOfSquare * 2
-	#NewChunk6.transform.origin.x += LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk6))
+	create_chunk(playerLocation, newLocation)
 	
-	#var NewChunk7 = ChunkResource.instance()
-	#NewChunk7.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk7.transform.origin.z += LengthOfSquare * 2
-	#NewChunk7.transform.origin.x -= LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk7))
+	newLocation = Vector3(-0.01,0.01,0)
+	playerLocation = Vector3(-18,0,-18)
 	
-	#var NewChunk8 = ChunkResource.instance()
-	#NewChunk8.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk8.transform.origin.z -= LengthOfSquare * 2
-	#NewChunk8.transform.origin.x += LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk8))
+	create_chunk(playerLocation, newLocation)
 	
-	#var NewChunk9 = ChunkResource.instance()
-	#NewChunk9.transform.origin = Vector3(newPos.x,0,newPos.y)
-	#NewChunk9.transform.origin.z -= LengthOfSquare * 2
-	#NewChunk9.transform.origin.x -= LengthOfSquare * 2
-	#Blocks.append(self.add_child(NewChunk9))
+	newLocation = Vector3(-0.01,-0.01,0)
+	playerLocation = Vector3(-18,0,18)
+	
+	create_chunk(playerLocation, newLocation)
+	
+	newLocation = Vector3(0.01,0.01,0)
+	playerLocation = Vector3(18,-0,-18)
+	
+	create_chunk(playerLocation, newLocation)
 	
 	pass

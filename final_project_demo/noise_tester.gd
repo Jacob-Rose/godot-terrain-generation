@@ -5,8 +5,8 @@ extends Node2D
 # var a = 2
 # var b = "text"
 
-var imgSize = 256
-var imgScale = 4.0
+var imgSize = 100
+var imgScale = 100.0
 var imgSpeed = 0.5
 var imgPersistance = 0.5
 var imgOctaves = 3
@@ -30,12 +30,12 @@ func _draw():
 	pass
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	offset.y += delta * imgSpeed
+	offset.x += delta * imgSpeed
 	var gradient = Gradient.new()
 	gradient.add_point(0.0, Color.black)
 	gradient.add_point(1.0, Color.white)
 	#image = noiseGen.getImage(100, offset, imgZoom)
-	image = noiseGen.getColorHeightmap(imgSize, offset, gradient)
+	image = noiseGen.getHeightmap(imgSize, offset, imgScale,imgOctaves,imgPersistance,imgLacunarity)
 	texture.create_from_image(image)
 	update()
 	pass
