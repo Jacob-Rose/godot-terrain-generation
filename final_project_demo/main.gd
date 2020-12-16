@@ -12,7 +12,6 @@ var HasCame
 func _ready():
 	FunkyDelta = 0
 	HasCame = false
-	#create_chunk(Vector3(0,0,0), 1)
 	Blocks = []
 	Player = get_node("player")
 	makeNewChunk(CurrentLocationOfChunk)
@@ -22,13 +21,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	#var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
-	
-	FunkyDelta += delta
-	
-	#if FunkyDelta >= 2 and not HasCame:
-	#	print("Here")
-	#	create_chunk(Vector3(Player.translation.x,1,Player.translation.z), Vector3(-50,0,-50))
-	#	HasCame = true
+
 	
 	var children = get_children()
 	

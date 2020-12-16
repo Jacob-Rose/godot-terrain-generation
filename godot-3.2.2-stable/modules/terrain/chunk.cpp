@@ -132,11 +132,11 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			//Push vertices in a clockwise motion, top left, top right, bottom right
 			//create essentially the first triangle
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert0.x), Math::abs(vert0.y)));
 			vertices.push_back(verteces[1]);
-			colors.push_back(mColorMap->get_pixel(vert1.x, vert1.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert1.x), Math::abs(vert1.y)));
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert3.x), Math::abs(vert3.y)));
 
 			//set the uvs
 			uvs.push_back(Vector2(verteces[0].x * 0.333, verteces[0].z * 0.333));
@@ -153,11 +153,11 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			//Push vertices in a clockwise motion, bottom right, bottom left, top left
 			//create essentially the second triangle
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(vert3.x, vert3.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert3.x), Math::abs(vert3.y)));
 			vertices.push_back(verteces[2]);
-			colors.push_back(mColorMap->get_pixel(vert2.x, vert2.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert2.x), Math::abs(vert2.y)));
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(vert0.x, vert0.y));
+			colors.push_back(mColorMap->get_pixel(Math::abs(vert0.x), Math::abs(vert0.y)));
 
 			uvs.push_back(Vector2(verteces[3].x * 0.333, verteces[3].z * 0.333));
 			uvs.push_back(Vector2(verteces[2].x * 0.333, verteces[2].z * 0.333));
@@ -195,13 +195,13 @@ Vector2 Chunk::checkOutOfBounds(int i, Vector<Vector3> verteces) {
 	vector.y = Math::abs(verteces[i].y);
 
 	//These should help with making sure the values wont be out of bounds when we sample
-	if (vector.x >= mColorMap->get_size().x) {
-		vector.x -= 1;
+	if (vector.x >= mColorMap->get_width()) {
+		vector.x = mColorMap->get_width()-1;
 	} else if (vector.x <= 0) {
 		vector.x += 1;
 	}
-	if (vector.y >= mColorMap->get_size().y) {
-		vector.y -= 1;
+	if (vector.y >= mColorMap->get_height()) {
+		vector.y = mColorMap->get_height() - 1;
 	} else if (vector.y <= 0) {
 		vector.y += 1;
 	}

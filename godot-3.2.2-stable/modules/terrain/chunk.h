@@ -30,10 +30,6 @@ class Chunk : public MeshInstance {
 		PoolColorArray colors;
 		PoolIntArray indeces;
 
-		//updated
-		PoolVector3Array _vertices;
-		PoolColorArray _colors;
-
 		int iD;
 		Vector3 chunkPos;
 
