@@ -166,14 +166,17 @@ void ChunkManager::makeNewWaveOfChunks(Vector2 newCentralChunkPos)
 // This function finds and destroys all currently spawned chunks
 void ChunkManager::clearOutChunks()
 {
-	Node *currentChild;
+	int childCount = get_child_count();
 
-	for (int i = 0; i < get_child_count(); i++)
+	int i = 0;
+
+	while (i < childCount && i != childCount)
 	{
-		if (get_child(i)->get_class() == "Chunk") {
-			currentChild = get_child(i);
-			remove_child(currentChild);
+		if (get_child(i)->get_class() == "Chunk")
+		{
+			SceneTree::get_singleton()->queue_delete(get_child(i));
 		}
+		i++;
 	}
 }
 
