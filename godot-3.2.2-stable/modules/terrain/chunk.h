@@ -58,8 +58,8 @@ class Chunk : public MeshInstance {
 		/// </summary>
 		/// <param name="heightMap"></param>
 		/// <param name="heightMapSize">The size of one side of the 2D heightmap, e.x. 25 == 25 * 25 size array</param>
-		void generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition);
-		void generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition);
+		void generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare);
+		void generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition, int lengthOfSquare);
 };
 
 

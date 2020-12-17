@@ -31,7 +31,7 @@ class ChunkManager : public Node {
 		Array mesh_array;
 
 		Vector3 meshArray[6];
-		const float LENGTH_OF_SQUARE = 10.0f;
+		float lengthOfSquare = 10.0f;
 		Vector2 locationOfCentralChunk;
 
 		Gradient colorGradient;
@@ -48,8 +48,7 @@ class ChunkManager : public Node {
 		void clearOutChunks();
 		void checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 		Vector2 getCentralChunkLocation();
-
-		int numberOfChunks = 1;
+		void changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity);
 
 		int noiseImageSize = 10;
 		float noiseImageScale = 30.0f;

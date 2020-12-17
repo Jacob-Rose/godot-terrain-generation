@@ -59,13 +59,13 @@ void Chunk::_draw()
 
 }
 
-void Chunk::generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition) {
+void Chunk::generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare) {
 	Ref<Image> img = memnew(Image);
 	img->create(heightMapSize, heightMapSize, false, Image::Format::FORMAT_RGB8);
-	generateTerrainMesh(heightMap, img, generatedPosition);
+	generateTerrainMesh(heightMap, img, generatedPosition, lengthOfSquare);
 }
 
-void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition) {
+void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition, int lengthOfSquare) {
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
 	Vector<Vector3> newQuad;
 	Vector3 offset = Vector3(-colorMap->get_height() + generatedPosition.x, 0, -colorMap->get_height() + generatedPosition.z); 
@@ -80,13 +80,13 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vecto
 				newQuad.resize(0);
 
 				//Create the four new vertices 
-				float heightVal = mHeightMap->get_pixel(x, 10 - y).r;
+				float heightVal = mHeightMap->get_pixel(x, lengthOfSquare - y).r;
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
-				heightVal = mHeightMap->get_pixel(x + 1,10 - y).r;
+				heightVal = mHeightMap->get_pixel(x + 1, lengthOfSquare - y).r;
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
-				heightVal = mHeightMap->get_pixel(x,(10 - y) - 1).r;
+				heightVal = mHeightMap->get_pixel(x, (lengthOfSquare - y) - 1).r;
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
-				heightVal = mHeightMap->get_pixel((x + 1),(10 - y) - 1).r;
+				heightVal = mHeightMap->get_pixel((x + 1), (lengthOfSquare - y) - 1).r;
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
 
 				//Create each face

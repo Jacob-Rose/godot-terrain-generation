@@ -2,10 +2,12 @@
 
 #include "chunk_manager.h"
 #include "core/io/resource_loader.h"
+#include <thread>
 
 void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
+	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity"), &ChunkManager::changeSettings);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -57,7 +59,7 @@ void ChunkManager::createChunk(Vector3 playerPos, Vector3 chunkOffset) {
 
 	Ref<Image> colorMap = noiseGen->getColorFromHeightmap(heightmap, noiseImageSize, colorGradient);
 
-	chunk->generateTerrainMesh(heightmap, noiseImageSize, playerPos);
+	chunk->generateTerrainMesh(heightmap, noiseImageSize, playerPos, lengthOfSquare);
 	add_child(chunk);
 
 	delete noiseGen;
@@ -72,23 +74,23 @@ void ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 	float distance = sqrtf(powf(directionalVector.x, 2.0f) + powf(directionalVector.y, 2.0f));
 
 	// Check if player is outside of central chunk square and adjust central chunk if needed
-	if (directionalVector.x <= -LENGTH_OF_SQUARE) {
-		locationOfCentralChunk.x -= LENGTH_OF_SQUARE * 2.0f;
+	if (directionalVector.x <= -lengthOfSquare) {
+		locationOfCentralChunk.x -= lengthOfSquare * 2.0f;
 		needsReloading = true;
 	}
 
-	if (directionalVector.x >= LENGTH_OF_SQUARE) {
-		locationOfCentralChunk.x += LENGTH_OF_SQUARE * 2.0f;
+	if (directionalVector.x >= lengthOfSquare) {
+		locationOfCentralChunk.x += lengthOfSquare * 2.0f;
 		needsReloading = true;
 	}
 
-	if (directionalVector.y <= -LENGTH_OF_SQUARE) {
-		locationOfCentralChunk.y -= LENGTH_OF_SQUARE * 2.0f;
+	if (directionalVector.y <= -lengthOfSquare) {
+		locationOfCentralChunk.y -= lengthOfSquare * 2.0f;
 		needsReloading = true;
 	}
 
-	if (directionalVector.y >= LENGTH_OF_SQUARE) {
-		locationOfCentralChunk.y += LENGTH_OF_SQUARE * 2.0f;
+	if (directionalVector.y >= lengthOfSquare) {
+		locationOfCentralChunk.y += lengthOfSquare * 2.0f;
 		needsReloading = true;
 	}
 
@@ -108,53 +110,56 @@ void ChunkManager::makeNewWaveOfChunks(Vector2 newCentralChunkPos)
 {
 	clearOutChunks();
 
-	float multiplierX = (newCentralChunkPos.x / (LENGTH_OF_SQUARE * 2));
-	float multiplierY = (newCentralChunkPos.y / (LENGTH_OF_SQUARE * 2));
+	float multiplierX = (newCentralChunkPos.x / (lengthOfSquare * 2));
+	float multiplierY = (newCentralChunkPos.y / (lengthOfSquare * 2));
 
-	Vector3 playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * multiplierX, 0, ((LENGTH_OF_SQUARE * 2) - 2) * multiplierY);
-	Vector3 newLocation = Vector3(0.01f * multiplierX, 0.01f * -(multiplierY), 0);
+	float offsetMultiplier = (noiseImageSize/ 1000.0f);
 
-	createChunk(playerLocation, newLocation);
-
-	newLocation = Vector3(0.01f * (multiplierX + 1.0f), 0.01f * -(multiplierY), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX + 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * multiplierY);
+	Vector3 playerLocation = Vector3(((lengthOfSquare * 2) - 2) * multiplierX, 0, ((lengthOfSquare * 2) - 2) * multiplierY);
+	Vector3 newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY), 0);
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * (multiplierX - 1.0f), 0.01f * -(multiplierY), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX - 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * multiplierY);
+	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - 2) * multiplierY);
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * multiplierX, 0.01f * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * multiplierX, 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY + 1));
+	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - 2) * multiplierY);
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * multiplierX, 0.01f * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * multiplierX, 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY - 1));
+	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY + 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * multiplierX, 0, ((lengthOfSquare * 2) - 2) * (multiplierY + 1));
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * (multiplierX + 1.0f), 0.01f * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX + 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY + 1));
+	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY - 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * multiplierX, 0, ((lengthOfSquare * 2) - 2) * (multiplierY - 1));
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * (multiplierX - 1.0f), 0.01f * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX - 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY - 1));
+	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - 2) * (multiplierY + 1));
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * (multiplierX + 1.0f), 0.01f * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX + 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY - 1));
+	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - 2) * (multiplierY - 1));
 
 	createChunk(playerLocation, newLocation);
 
-	newLocation = Vector3(0.01f * (multiplierX - 1.0f), 0.01f * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((LENGTH_OF_SQUARE * 2) - 2) * (multiplierX - 1), 0, ((LENGTH_OF_SQUARE * 2) - 2) * (multiplierY + 1));
+	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - 2) * (multiplierY - 1));
 
 	createChunk(playerLocation, newLocation);
+
+	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
+	playerLocation = Vector3(((lengthOfSquare * 2) - 2) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - 2) * (multiplierY + 1));
+
+	createChunk(playerLocation, newLocation);
+
 }
 
 
@@ -163,10 +168,20 @@ void ChunkManager::clearOutChunks()
 {
 	Node *currentChild;
 
-	for (int i = 0; i < get_child_count(); i++) {
+	for (int i = 0; i < get_child_count(); i++)
+	{
 		if (get_child(i)->get_class() == "Chunk") {
 			currentChild = get_child(i);
 			remove_child(currentChild);
 		}
 	}
+}
+
+
+// This function changes all of the chunk noise settings
+void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity)
+{
+	noiseImageOctaves = imageOctaves;
+	noiseImagePersistance = imagePersistance;
+	noiseImageLacunarity = imageLacunarity;
 }
