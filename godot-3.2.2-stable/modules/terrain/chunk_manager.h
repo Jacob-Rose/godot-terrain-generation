@@ -44,7 +44,9 @@ class ChunkManager : public Node {
 		void _update();
 		void _ready();
 		void createChunk(Vector3 playerPos,Vector3 chunkOffset);
-		bool checkIfChunksNeedToBeReloaded(Vector2 playerPos);
+		void makeNewWaveOfChunks(Vector2 newCentralChunkPos);
+		void clearOutChunks();
+		void checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 		Vector2 getCentralChunkLocation();
 
 		int numberOfChunks = 1;
