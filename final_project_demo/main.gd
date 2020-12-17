@@ -15,6 +15,11 @@ func _ready():
 	Blocks = []
 	Player = get_node("player")
 	makeNewChunk(CurrentLocationOfChunk)
+	
+	var mat = load("res://vertexcolor.tres")
+	setChunkMaterial(mat)
+	
+	
 	pass # Replace with function body.
 
 

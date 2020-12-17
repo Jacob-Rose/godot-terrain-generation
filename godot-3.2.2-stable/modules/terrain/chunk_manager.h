@@ -13,6 +13,7 @@
 #include "chunk.h"
 #include "noise.h"
 #include "core/resource.h"
+#include <scene/resources/material.h>
 #include <scene/resources/gradient.h>
 
 class ChunkManager : public Node {
@@ -36,6 +37,8 @@ class ChunkManager : public Node {
 
 		Gradient colorGradient;
 
+		Ref<Material> chunkMaterial;
+
 	public:
 		ChunkManager();
 		~ChunkManager();
@@ -47,8 +50,10 @@ class ChunkManager : public Node {
 		bool checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 		Vector2 getCentralChunkLocation();
 
-		int numberOfChunks = 1;
+		void setChunkMaterial(Ref<Material> mat);
 
+
+		int numberOfChunks = 1;
 		int noiseImageSize = 10;
 		float noiseImageScale = 30.0f;
 		int noiseImageOctaves = 3;

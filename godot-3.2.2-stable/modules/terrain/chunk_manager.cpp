@@ -9,6 +9,7 @@ void ChunkManager::_bind_methods()
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 	//ClassDB::bind_method(D_METHOD("create_chunk", "player_2d_position","size_chunk"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 	ClassDB::bind_method(D_METHOD("create_chunk", "Playerpos", "aqui"), &ChunkManager::createChunk);
+	ClassDB::bind_method(D_METHOD("setChunkMaterial", "chunkMaterial"), &ChunkManager::setChunkMaterial);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -56,7 +57,7 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 
 		Chunk* chunk = memnew(Chunk, playerPos); //TODO memory leak?
-
+		
 		NoiseGenerator* noiseGen = new NoiseGenerator();
 		Ref<Image> heightmap = noiseGen->getHeightmap(noiseImageSize, Vector2(chunkOffset.x * noiseImageScale, chunkOffset.y * noiseImageScale), noiseImageScale, noiseImageOctaves, noiseImagePersistance, noiseImageLacunarity);
 
@@ -64,6 +65,12 @@ void ChunkManager::createChunk(Vector3 playerPos,Vector3 chunkOffset) {
 
 		chunk->generateTerrainMesh(heightmap, noiseImageSize, playerPos);
 		add_child(chunk);
+
+		int surfaceCount = chunk->get_mesh()->get_surface_count();
+
+		for (int i = 0; i < surfaceCount; i++) {
+			chunk->get_mesh()->surface_set_material(i, chunkMaterial);
+		}
 
 		printf("Chunk spawned");
 		delete noiseGen;
@@ -110,4 +117,8 @@ bool ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 Vector2 ChunkManager::getCentralChunkLocation()
 {
 	return locationOfCentralChunk;
+}
+
+void ChunkManager::setChunkMaterial(Ref<Material> mat) {
+	chunkMaterial = mat;
 }
