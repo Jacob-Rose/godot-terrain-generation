@@ -1,90 +1,78 @@
 extends ChunkManager
 
-const ChunkResource = preload("res://Floor.tscn")
 const LengthOfSquare = 10
-var CurrentLocationOfChunk = Vector2(0,0)
 var Player
-var Blocks
-var FunkyDelta
-var HasCame
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	FunkyDelta = 0
-	HasCame = false
-	Blocks = []
 	Player = get_node("player")
-	makeNewChunk(CurrentLocationOfChunk)
+	makeNewChunk(Vector2(0,0))
 	pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	#var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
-
+	var needsToBeReloaded = check_for_chunk_update(Vector2(Player.transform.origin.x,Player.transform.origin.z))
 	
-	var children = get_children()
-	
-	#if needsToBeReloaded:
-	#	makeNewChunk(get_central_chunk_location())
-	#	pass
+	if needsToBeReloaded:
+		makeNewChunk(get_central_chunk_location())
+		pass
 
 	pass
 
 func makeNewChunk(newPos):
 	
+	for node in get_children():
+		if(node is Chunk):
+			remove_child(node)
+			pass
+	pass
 	
-	#for node in get_children():
-	#	if(node.is_instance()):
-	#		pass
-	#pass
+	var multiplierX = (newPos.x / (LengthOfSquare * 2))
+	var multiplierY = (newPos.y / (LengthOfSquare * 2))
 	
-	#Blocks.clear()
-	
-	var originalLocation = Vector3(newPos.x,0,newPos.y)
-	
-	var playerLocation = originalLocation
-	var newLocation = originalLocation
-	
-	create_chunk(playerLocation, newLocation)
-	
-	newLocation = Vector3(0.01,0,0)
-	playerLocation = Vector3(18,0,0)
+	var playerLocation = Vector3(((LengthOfSquare * 2) - 2) * multiplierX,0,((LengthOfSquare * 2) - 2) * multiplierY)
+	var newLocation = Vector3(0.01 * multiplierX, 0.01 * -(multiplierY),0)
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3 (-0.01,0,0)
-	playerLocation = Vector3(-18,0,0)
+	newLocation = Vector3(0.01 * (multiplierX + 1),0.01 * -(multiplierY),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX + 1),0,((LengthOfSquare * 2) - 2) * multiplierY)
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(0,0.01,0)
-	playerLocation = Vector3(0,0,-18)
+	newLocation = Vector3 (0.01 * (multiplierX - 1),0.01 * -(multiplierY),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX - 1),0,((LengthOfSquare * 2) - 2) * multiplierY)
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(0,-0.01,0)
-	playerLocation = Vector3(0,0,18)
+	newLocation = Vector3(0.01 * multiplierX,0.01 * -(multiplierY + 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * multiplierX,0,((LengthOfSquare * 2) - 2) * (multiplierY + 1))
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(0.01,-0.01,0)
-	playerLocation = Vector3(18,0,18)
+	newLocation = Vector3(0.01 * multiplierX,0.01 * -(multiplierY - 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * multiplierX,0,((LengthOfSquare * 2) - 2) * (multiplierY - 1))
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(-0.01,0.01,0)
-	playerLocation = Vector3(-18,0,-18)
+	newLocation = Vector3(0.01 * (multiplierX + 1),0.01 * -(multiplierY + 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX + 1),0,((LengthOfSquare * 2) - 2) * (multiplierY + 1))
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(-0.01,-0.01,0)
-	playerLocation = Vector3(-18,0,18)
+	newLocation = Vector3(0.01 * (multiplierX - 1),0.01 * -(multiplierY - 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX - 1),0,((LengthOfSquare * 2) - 2) * (multiplierY - 1))
 	
 	create_chunk(playerLocation, newLocation)
 	
-	newLocation = Vector3(0.01,0.01,0)
-	playerLocation = Vector3(18,-0,-18)
+	newLocation = Vector3(0.01 * (multiplierX + 1),0.01 * -(multiplierY - 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX + 1),0,((LengthOfSquare * 2) - 2) * (multiplierY - 1))
+	
+	create_chunk(playerLocation, newLocation)
+	
+	newLocation = Vector3(0.01 * (multiplierX - 1),0.01 * -(multiplierY + 1),0)
+	playerLocation = Vector3(((LengthOfSquare * 2) - 2) * (multiplierX - 1),0,((LengthOfSquare * 2) - 2) * (multiplierY + 1))
 	
 	create_chunk(playerLocation, newLocation)
 	
