@@ -6,8 +6,6 @@
 #include <array>
 #include "string"
 #include "scene/main/node.h"
-#include "scene/resources/mesh.h"
-#include "core/math/triangle_mesh.h"
 #include "core/image.h"
 #include "core/engine.h"
 #include "chunk.h"
@@ -15,58 +13,80 @@
 #include "core/resource.h"
 #include <scene/resources/gradient.h>
 
+// Constant ints
+const int DEFAULT_NOISE_IMAGE_SIZE = 10;
+const int DEFAULT_NOISE_IMAGE_OCTAVES = 3;
+const int CHUNK_POSITION_OFFSET = 2;
+
+// Constant floats
+const float DEFAULT_NOISE_IMAGE_SCALE = 30.0f;
+const float DEFAULT_NOISE_IMAGE_PERSISTENCE = 2.5f;
+const float DEFAULT_NOISE_IMAGE_LACUNARITY = 2.0f;
+const float DEFAULT_LEVEL_ONE_MAX = 0.1f;
+const float DEFAULT_LEVEL_TWO_MAX = 0.75f;
+const float DEFAULT_LEVEL_THREE_MAX = 0.9f;
+const float OFFSET_COEFFICIENT = 1000.0F;
+
+// Constant colors
+const Color DEFAULT_LEVEL_ONE_COLOR = Color(0, 0, 1, 1);
+const Color DEFAULT_LEVEL_TWO_COLOR = Color(0, 1, 0, 1);
+const Color DEFAULT_LEVEL_THREE_COLOR = Color(0.5f, 0.5f, 0.5f, 1);
+const Color DEFAULT_LEVEL_FOUR_COLOR = Color(1, 1, 1, 1);
+
 class ChunkManager : public Node {
 	GDCLASS(ChunkManager, Node);
 
-
-
 	protected:
-		static void _bind_methods();
 
-		//notification is the only auto-linked function in a GDCLASS
-		void _notification(int p_what);
-
-		//Ref<ArrayMesh> arrayMesh;
-		ArrayMesh arrayMesh;
-		Array mesh_array;
-
-		Vector3 meshArray[6];
-		float lengthOfSquare = 10.0f;
+		// Chunk Locations
 		Vector2 locationOfCentralChunk;
 
+		// Gradients
 		Gradient colorGradient;
 
-		float levelOneMax = 0.1f;
-		float levelTwoMax = 0.75f;
-		float levelThreeMax = 0.9f;
+		// Level heights
+		float levelOneMax = DEFAULT_LEVEL_ONE_MAX;
+		float levelTwoMax = DEFAULT_LEVEL_TWO_MAX;
+		float levelThreeMax = DEFAULT_LEVEL_THREE_MAX;
 
-		Color levelOneColor = Color(0, 0, 1, 1);
-		Color levelTwoColor = Color(0, 1, 0, 1);
-		Color levelThreeColor = Color(0.5f, 0.5f, 0.5f, 1);
-		Color levelFourColor = Color(1, 1, 1, 1);
+		// Level colors
+		Color levelOneColor = DEFAULT_LEVEL_ONE_COLOR;
+		Color levelTwoColor = DEFAULT_LEVEL_TWO_COLOR;
+		Color levelThreeColor = DEFAULT_LEVEL_THREE_COLOR;
+		Color levelFourColor = DEFAULT_LEVEL_FOUR_COLOR;
 
-	public:
-		ChunkManager();
-		~ChunkManager();
+		// Noise-based variables
+		int lengthOfSquare = DEFAULT_NOISE_IMAGE_SIZE;
+		int noiseImageSize = DEFAULT_NOISE_IMAGE_SIZE;
+		float noiseImageScale = DEFAULT_NOISE_IMAGE_SCALE;
+		int noiseImageOctaves = DEFAULT_NOISE_IMAGE_OCTAVES;
+		float noiseImagePersistance = DEFAULT_NOISE_IMAGE_PERSISTENCE;
+		float noiseImageLacunarity = DEFAULT_NOISE_IMAGE_LACUNARITY;
 
-	//	void _process(float delta);
-		void _update();
-		void _ready();
-		void createChunk(Vector3 playerPos,Vector3 chunkOffset);
+		// Default Engine functions
+		static void _bind_methods();
+		void _notification(int p_what);
+
+		// Acessors
+		Vector2 getCentralChunkLocation();
+
+		// Mutators
+		void createChunk(Vector3 playerPos, Vector3 chunkOffset);
 		void makeNewWaveOfChunks(Vector2 newCentralChunkPos);
 		void clearOutChunks();
+
+	public:
+		// Constructors / Destructors
+		ChunkManager();
+		~ChunkManager();
+		void _ready();
+
+		// Update functions
 		void checkIfChunksNeedToBeReloaded(Vector2 playerPos);
-		Vector2 getCentralChunkLocation();
+
+		// Mutators
 		void changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity);
 		void changeLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
-
-		int noiseImageSize = 10;
-		float noiseImageScale = 30.0f;
-		int noiseImageOctaves = 3;
-		float noiseImagePersistance = 2.5f;
-		float noiseImageLacunarity = 2.0f;
-
-		
 };
 
 

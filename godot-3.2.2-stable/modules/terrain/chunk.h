@@ -13,6 +13,9 @@
 #include "core/method_bind_ext.gen.inc"
 #include "scene/3d/mesh_instance.h"
 
+const int SIZE_OF_FACE_HORIZONTAL = 2;
+const int NOISE_MULTIPLIER = 5;
+
 
 class Chunk : public MeshInstance {
 	GDCLASS(Chunk, MeshInstance);
@@ -26,51 +29,46 @@ class Chunk : public MeshInstance {
 		//original
 		PoolVector3Array vertices;
 		PoolVector3Array normals;
-		PoolVector2Array uvs;
 		PoolColorArray colors;
 		PoolIntArray indeces;
 
+		// Floats
 		float levelOneMax;
 		float levelTwoMax;
 		float levelThreeMax;
 
+		// Colors
 		Color levelOneColor;
 		Color levelTwoColor;
 		Color levelThreeColor;
 		Color levelFourColor;
 
+		// Integers
 		int iD;
+
+		// Vector3's
 		Vector3 chunkPos;
 
-		Ref<Image> mColorMap;
-		Ref<Image> mHeightMap;
+		// Images
+		Ref<Image> colorMap;
+		Ref<Image> heightMap;
 
-		void construct(Vector3 pos);
-
-	public:
-		Chunk();
-		Chunk(Vector3 position);
-
-
-
-		//	void _process(float delta);
-		void _update();
-		void _ready();
-		void _draw();
-
+		// Mutators
+		Color determineColor(float heightVal);
 		Array DrawFace(Vector<Vector3> verteces, Vector<Color> newColors, int i);
 
-		Vector2 checkOutOfBounds(int i, Vector<Vector3> verteces);
+		// Generators
+		void generateTerrainMesh(Ref<Image> _heightMap, Ref<Image> _colorMap, Vector3 generatedPosition, int lengthOfSquare);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="heightMap"></param>
-		/// <param name="heightMapSize">The size of one side of the 2D heightmap, e.x. 25 == 25 * 25 size array</param>
-		void generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare);
-		void generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition, int lengthOfSquare);
-		Color determineColor(float heightVal);
+	public:
+		// Constructors
+		Chunk();
+		void _ready();
 
+		// Generators
+		void initializeTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare);
+
+		// Settings Functions
 		void addLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
 };
 
