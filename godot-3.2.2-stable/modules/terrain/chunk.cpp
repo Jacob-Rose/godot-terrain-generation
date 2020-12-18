@@ -212,17 +212,28 @@ Vector2 Chunk::checkOutOfBounds(int i, Vector<Vector3> verteces) {
 
 Color Chunk::determineColor(float heightVal)
 {
-	if (heightVal < 0.1f)
+	if (heightVal < levelOneMax)
 	{
-		return Color(0, 0, 1, 1);
+		return levelOneColor;
 	}
-	if (heightVal < 0.75f)
+	if (heightVal < levelTwoMax)
 	{
-		return Color(0, 1, 0, 1);
+		return levelTwoColor;
 	}
-	if (heightVal < 0.9f)
+	if (heightVal < levelThreeMax)
 	{
-		return Color(0.5, 0.5, 0.5, 1.0);
+		return levelThreeColor;
 	}
-	return Color(1, 1, 1, 1);
+	return levelFourColor;
+}
+
+void Chunk::addLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor)
+{
+	levelOneMax = _levelOneMax;
+	levelTwoMax = _levelTwoMax;
+	levelThreeMax = _levelThreeMax;
+	levelOneColor = _levelOneColor;
+	levelTwoColor = _levelTwoColor;
+	levelThreeColor = _levelThreeColor;
+	levelFourColor = _levelFourColor;
 }

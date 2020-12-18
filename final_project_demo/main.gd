@@ -1,8 +1,17 @@
 extends ChunkManager
 
-const NoiseOcatves = 4
+const NoiseOcatves = 3
 const NoisePersistence = 2.5
 const NoiseLacunarity = 2.0
+
+const LevelOneMax = 0.1
+const LevelTwoMax = 0.75
+const LevelThreeMax = 0.9
+
+const LevelOneColor = Color(0,0,1,1)
+const LevelTwoColor = Color(0,1,0,1)
+const LevelThreeColor = Color(0.5,0.5,0.5,1)
+const LevelFourColor = Color(1,1,1,1)
 
 var Player
 
@@ -10,6 +19,7 @@ var Player
 func _ready():
 	Player = get_node("player")
 	change_settings(NoiseOcatves,NoisePersistence,NoiseLacunarity)
+	change_level_settings(LevelOneMax,LevelTwoMax,LevelThreeMax,LevelOneColor,LevelTwoColor,LevelThreeColor,LevelFourColor)
 	pass # Replace with function body.
 
 

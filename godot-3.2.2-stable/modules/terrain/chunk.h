@@ -30,6 +30,15 @@ class Chunk : public MeshInstance {
 		PoolColorArray colors;
 		PoolIntArray indeces;
 
+		float levelOneMax;
+		float levelTwoMax;
+		float levelThreeMax;
+
+		Color levelOneColor;
+		Color levelTwoColor;
+		Color levelThreeColor;
+		Color levelFourColor;
+
 		int iD;
 		Vector3 chunkPos;
 
@@ -61,6 +70,8 @@ class Chunk : public MeshInstance {
 		void generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare);
 		void generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition, int lengthOfSquare);
 		Color determineColor(float heightVal);
+
+		void addLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
 };
 
 

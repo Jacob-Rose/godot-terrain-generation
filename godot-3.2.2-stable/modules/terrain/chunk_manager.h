@@ -36,6 +36,15 @@ class ChunkManager : public Node {
 
 		Gradient colorGradient;
 
+		float levelOneMax = 0.1f;
+		float levelTwoMax = 0.75f;
+		float levelThreeMax = 0.9f;
+
+		Color levelOneColor = Color(0, 0, 1, 1);
+		Color levelTwoColor = Color(0, 1, 0, 1);
+		Color levelThreeColor = Color(0.5f, 0.5f, 0.5f, 1);
+		Color levelFourColor = Color(1, 1, 1, 1);
+
 	public:
 		ChunkManager();
 		~ChunkManager();
@@ -49,12 +58,15 @@ class ChunkManager : public Node {
 		void checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 		Vector2 getCentralChunkLocation();
 		void changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity);
+		void changeLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
 
 		int noiseImageSize = 10;
 		float noiseImageScale = 30.0f;
 		int noiseImageOctaves = 3;
 		float noiseImagePersistance = 2.5f;
 		float noiseImageLacunarity = 2.0f;
+
+		
 };
 
 

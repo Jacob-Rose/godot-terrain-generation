@@ -8,6 +8,7 @@ void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
 	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity"), &ChunkManager::changeSettings);
+	ClassDB::bind_method(D_METHOD("change_level_settings", "Level One Max", "Level Two Max", "Level Three Max", "Level One Color", "Level Two Color", "Level Three Color", "Level Four Color"), &ChunkManager::changeLevelSettings);
 }
 
 void ChunkManager::_notification(int p_what) {
@@ -59,6 +60,7 @@ void ChunkManager::createChunk(Vector3 playerPos, Vector3 chunkOffset) {
 
 	Ref<Image> colorMap = noiseGen->getColorFromHeightmap(heightmap, noiseImageSize, colorGradient);
 
+	chunk->addLevelSettings(levelOneMax, levelTwoMax, levelThreeMax, levelOneColor, levelTwoColor, levelThreeColor, levelFourColor);
 	chunk->generateTerrainMesh(heightmap, noiseImageSize, playerPos, lengthOfSquare);
 	add_child(chunk);
 
@@ -187,4 +189,16 @@ void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, floa
 	noiseImageOctaves = imageOctaves;
 	noiseImagePersistance = imagePersistance;
 	noiseImageLacunarity = imageLacunarity;
+}
+
+
+void ChunkManager::changeLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor)
+{
+	levelOneMax = _levelOneMax;
+	levelTwoMax = _levelTwoMax;
+	levelThreeMax = _levelThreeMax;
+	levelOneColor = _levelOneColor;
+	levelTwoColor = _levelTwoColor;
+	levelThreeColor = _levelThreeColor;
+	levelFourColor = _levelFourColor;
 }
