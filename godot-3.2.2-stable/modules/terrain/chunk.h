@@ -49,7 +49,7 @@ class Chunk : public MeshInstance {
 		void _ready();
 		void _draw();
 
-		Array DrawFace(Vector<Vector3> verteces,int i);
+		Array DrawFace(Vector<Vector3> verteces, Vector<Color> newColors, int i);
 
 		Vector2 checkOutOfBounds(int i, Vector<Vector3> verteces);
 
@@ -60,6 +60,7 @@ class Chunk : public MeshInstance {
 		/// <param name="heightMapSize">The size of one side of the 2D heightmap, e.x. 25 == 25 * 25 size array</param>
 		void generateTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vector3 generatedPosition, int lengthOfSquare);
 		void generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vector3 generatedPosition, int lengthOfSquare);
+		Color determineColor(float heightVal);
 };
 
 

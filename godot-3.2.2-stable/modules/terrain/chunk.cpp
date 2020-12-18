@@ -50,6 +50,11 @@ void Chunk::_update()
 
 void Chunk::_ready()
 {
+	Ref<SpatialMaterial> newMaterial = memnew(SpatialMaterial);
+	newMaterial->set_flag(SpatialMaterial::FLAG_ALBEDO_FROM_VERTEX_COLOR, true);
+
+	set_material_override(newMaterial);
+
 	set_process(true);
 	set_process_input(true);
 }
@@ -79,20 +84,29 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vecto
 				newQuad.clear();
 				newQuad.resize(0);
 
+				Vector<Color> newColors;
+				newColors.resize(0);
+
 				//Create the four new vertices 
 				float heightVal = mHeightMap->get_pixel(x, lengthOfSquare - y).r;
+				newColors.push_back(determineColor(heightVal));
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, y * 2) + offset);
+
 				heightVal = mHeightMap->get_pixel(x + 1, lengthOfSquare - y).r;
+				newColors.push_back(determineColor(heightVal));
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, y * 2) + offset);
+
 				heightVal = mHeightMap->get_pixel(x, (lengthOfSquare - y) - 1).r;
+				newColors.push_back(determineColor(heightVal));
 				newQuad.push_back(Vector3(x * 2, heightVal * 5, (y + 1) * 2) + offset);
+
 				heightVal = mHeightMap->get_pixel((x + 1), (lengthOfSquare - y) - 1).r;
+				newColors.push_back(determineColor(heightVal));
 				newQuad.push_back(Vector3((x + 1) * 2, heightVal * 5, (y + 1) * 2) + offset);
 
 				//Create each face
-				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 0));
-				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, 1));
-
+				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 0));
+				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 1));
 				//set the name of the surfaces
 				a->surface_set_name(iD, String(std::to_string(iD).c_str()) + "Tri1");
 				iD++;
@@ -103,14 +117,12 @@ void Chunk::generateTerrainMesh(Ref<Image> heightMap, Ref<Image> colorMap, Vecto
 	}
 	mColorMap->unlock();
 	mHeightMap->unlock();
-	set_material_override(a->surface_get_material(0));
-	a->regen_normalmaps();
 	//	//Draw Face here
 	if (this != NULL)
 		this->set_mesh(a);
 }
 
-Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
+Array Chunk::DrawFace(Vector<Vector3> verteces, Vector<Color> newColors, int i)
 {
 	Array mesh_array;
 
@@ -132,16 +144,11 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			//Push vertices in a clockwise motion, top left, top right, bottom right
 			//create essentially the first triangle
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert0.x), Math::abs(vert0.y)));
+			colors.push_back(newColors[0]);
 			vertices.push_back(verteces[1]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert1.x), Math::abs(vert1.y)));
+			colors.push_back(newColors[1]);
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert3.x), Math::abs(vert3.y)));
-
-			//set the uvs
-			uvs.push_back(Vector2(verteces[0].x * 0.333, verteces[0].z * 0.333));
-			uvs.push_back(Vector2(verteces[1].x * 0.333, verteces[1].z * 0.333));
-			uvs.push_back(Vector2(verteces[3].x * 0.333, verteces[3].z * 0.333));
+			colors.push_back(newColors[3]);
 
 			//normals
 			normals.push_back(verteces[1]);
@@ -153,15 +160,11 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 			//Push vertices in a clockwise motion, bottom right, bottom left, top left
 			//create essentially the second triangle
 			vertices.push_back(verteces[3]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert3.x), Math::abs(vert3.y)));
+			colors.push_back(newColors[3]);
 			vertices.push_back(verteces[2]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert2.x), Math::abs(vert2.y)));
+			colors.push_back(newColors[2]);
 			vertices.push_back(verteces[0]);
-			colors.push_back(mColorMap->get_pixel(Math::abs(vert0.x), Math::abs(vert0.y)));
-
-			uvs.push_back(Vector2(verteces[3].x * 0.333, verteces[3].z * 0.333));
-			uvs.push_back(Vector2(verteces[2].x * 0.333, verteces[2].z * 0.333));
-			uvs.push_back(Vector2(verteces[0].x * 0.333, verteces[0].z * 0.333));
+			colors.push_back(newColors[0]);
 
 			normals.push_back(verteces[2]);
 			normals.push_back(verteces[3]);
@@ -179,12 +182,10 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, int i)
 	mesh_array.resize(ArrayMesh::ARRAY_MAX);
 
 	mesh_array[ArrayMesh::ARRAY_VERTEX] = vertices;
-	mesh_array[ArrayMesh::ARRAY_TEX_UV] = uvs;
 	mesh_array[ArrayMesh::ARRAY_NORMAL] = normals;
 	mesh_array[ArrayMesh::ARRAY_COLOR] = colors;
 
 	mesh_array[ArrayMesh::ARRAY_INDEX] = indeces;
-
 
 	return mesh_array;
 }
@@ -207,4 +208,21 @@ Vector2 Chunk::checkOutOfBounds(int i, Vector<Vector3> verteces) {
 	}
 	
 	return vector;
+}
+
+Color Chunk::determineColor(float heightVal)
+{
+	if (heightVal < 0.1f)
+	{
+		return Color(0, 0, 1, 1);
+	}
+	if (heightVal < 0.75f)
+	{
+		return Color(0, 1, 0, 1);
+	}
+	if (heightVal < 0.9f)
+	{
+		return Color(0.5, 0.5, 0.5, 1.0);
+	}
+	return Color(1, 1, 1, 1);
 }
