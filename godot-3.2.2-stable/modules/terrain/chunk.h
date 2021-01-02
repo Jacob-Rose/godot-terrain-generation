@@ -13,9 +13,6 @@
 #include "core/method_bind_ext.gen.inc"
 #include "scene/3d/mesh_instance.h"
 
-const int SIZE_OF_FACE_HORIZONTAL = 2;
-const int NOISE_MULTIPLIER = 5;
-
 
 class Chunk : public MeshInstance {
 	GDCLASS(Chunk, MeshInstance);
@@ -25,12 +22,6 @@ class Chunk : public MeshInstance {
 
 		//notification is the only auto-linked function in a GDCLASS
 		void _notification(int p_what);
-
-		//original
-		PoolVector3Array vertices;
-		PoolVector3Array normals;
-		PoolColorArray colors;
-		PoolIntArray indeces;
 
 		// Floats
 		float levelOneMax;
@@ -45,6 +36,8 @@ class Chunk : public MeshInstance {
 
 		// Integers
 		int iD;
+		int faceSize;
+		int noiseMult;
 
 		// Vector3's
 		Vector3 chunkPos;
@@ -56,6 +49,8 @@ class Chunk : public MeshInstance {
 		// Mutators
 		Color determineColor(float heightVal);
 		Array DrawFace(Vector<Vector3> verteces, Vector<Color> newColors, int i);
+
+		void MakeSurface(Ref<ArrayMesh> a, int x, int y, Vector3 offset, int lengthOfSquare, Vector<float> heightVals);
 
 		// Generators
 		void generateTerrainMesh(Ref<Image> _heightMap, Ref<Image> _colorMap, Vector3 generatedPosition, int lengthOfSquare);
@@ -70,6 +65,7 @@ class Chunk : public MeshInstance {
 
 		// Settings Functions
 		void addLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
+		void addChunkSizeSettings(int horizontalSize, int _noiseMultiplier);
 };
 
 

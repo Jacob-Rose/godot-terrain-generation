@@ -6,7 +6,7 @@
 void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
-	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity"), &ChunkManager::changeSettings);
+	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity", "Image Size", "Image Scale", "Length Of Each Face", "Noise Multiplier"), &ChunkManager::changeSettings);
 	ClassDB::bind_method(D_METHOD("change_level_settings", "Level One Max", "Level Two Max", "Level Three Max", "Level One Color", "Level Two Color", "Level Three Color", "Level Four Color"), &ChunkManager::changeLevelSettings);
 }
 
@@ -57,6 +57,7 @@ void ChunkManager::createChunk(Vector3 playerPos, Vector3 chunkOffset) {
 
 	// Add level color settings
 	chunk->addLevelSettings(levelOneMax, levelTwoMax, levelThreeMax, levelOneColor, levelTwoColor, levelThreeColor, levelFourColor);
+	chunk->addChunkSizeSettings(chunkPositionOffset, noiseMultiplier);
 
 	// Create terrain mesh and spawn into level
 	chunk->initializeTerrainMesh(heightmap, noiseImageSize, playerPos, lengthOfSquare);
@@ -76,22 +77,22 @@ void ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 
 	// Check if player is outside of central chunk square and adjust central chunk if needed
 	if (directionalVector.x <= -lengthOfSquare) {
-		locationOfCentralChunk.x -= lengthOfSquare * SIZE_OF_FACE_HORIZONTAL;
+		locationOfCentralChunk.x -= lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
 	if (directionalVector.x >= lengthOfSquare) {
-		locationOfCentralChunk.x += lengthOfSquare * SIZE_OF_FACE_HORIZONTAL;
+		locationOfCentralChunk.x += lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
 	if (directionalVector.y <= -lengthOfSquare) {
-		locationOfCentralChunk.y -= lengthOfSquare * SIZE_OF_FACE_HORIZONTAL;
+		locationOfCentralChunk.y -= lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
 	if (directionalVector.y >= lengthOfSquare) {
-		locationOfCentralChunk.y += lengthOfSquare * SIZE_OF_FACE_HORIZONTAL;
+		locationOfCentralChunk.y += lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
@@ -120,51 +121,51 @@ void ChunkManager::makeNewWaveOfChunks(Vector2 newCentralChunkPos)
 	float multiplierY = (newCentralChunkPos.y / (lengthOfSquare * 2));
 
 	// Create noise offset
-	float offsetMultiplier = (noiseImageSize/ OFFSET_COEFFICIENT);
+	float offsetMultiplier = noiseImageOffset;
 
 	// Center chunk
-	Vector3 playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierX, 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierY);
+	Vector3 playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
 	Vector3 newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY), 0);
 	createChunk(playerLocation, newLocation);
 
-	// Right Chunk
+	//// Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierY);
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
 	createChunk(playerLocation, newLocation);
 
-	// Left Chunk
+	//// Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierY);
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
 	createChunk(playerLocation, newLocation);
 
-	// Upper Chunk
+	//// Upper Chunk
 	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierX, 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY + 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
 	createChunk(playerLocation, newLocation);
 
-	// Lower Chunk
+	//// Lower Chunk
 	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * multiplierX, 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY - 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
 	createChunk(playerLocation, newLocation);
 
-	// Top Right Chunk
+	//// Top Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY + 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
 	createChunk(playerLocation, newLocation);
 
-	// Bottom Left Chunk
+	//// Bottom Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY - 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
 	createChunk(playerLocation, newLocation);
 
-	// Bottom Right Chunk
+	//// Bottom Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX + 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY - 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
 	createChunk(playerLocation, newLocation);
 
-	// Top Left Chunk
+	//// Top Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierX - 1), 0, ((lengthOfSquare * 2) - CHUNK_POSITION_OFFSET) * (multiplierY + 1));
+	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
 	createChunk(playerLocation, newLocation);
 
 }
@@ -189,11 +190,16 @@ void ChunkManager::clearOutChunks()
 
 
 // This function changes all of the chunk noise settings
-void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity)
-{
+void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity, float imageSize, float imageScale,int horizontalSize, int heightMultiplier) {
 	noiseImageOctaves = imageOctaves;
 	noiseImagePersistance = imagePersistance;
 	noiseImageLacunarity = imageLacunarity;
+	noiseImageSize = imageSize;
+	lengthOfSquare = imageSize;
+	noiseImageOffset = OFFSET_COEFFICIENT * (noiseImageSize - 1);
+	noiseImageScale = imageScale;
+	chunkPositionOffset = horizontalSize;
+	noiseMultiplier = heightMultiplier;
 }
 
 

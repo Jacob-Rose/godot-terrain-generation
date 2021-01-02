@@ -3,6 +3,8 @@
 #include "chunk.h"
 #include "scene/main/viewport.h"
 #include <string>
+#include <thread>
+#include <vector>
 #include "noise.h"
 
 // This function adds any needed functions or parameters to the editor
@@ -55,6 +57,7 @@ void Chunk::initializeTerrainMesh(Ref<Image> heightMap, int heightMapSize, Vecto
 
 	// Generate with new color map
 	generateTerrainMesh(heightMap, img, generatedPosition, lengthOfSquare);
+	img.unref();
 }
 
 
@@ -63,8 +66,8 @@ void Chunk::generateTerrainMesh(Ref<Image> _heightMap, Ref<Image> _colorMap, Vec
 
 	// Initialize vertex array, vertex colors and arraymesh
 	Ref<ArrayMesh> a = memnew(ArrayMesh);
-	Vector<Vector3> newQuad;
-	Vector<Color> newColors;
+
+	Vector<float> heightVals;
 
 	// Set and lock color and height map
 	colorMap = _colorMap;
@@ -72,45 +75,29 @@ void Chunk::generateTerrainMesh(Ref<Image> _heightMap, Ref<Image> _colorMap, Vec
 	colorMap->lock();
 	heightMap->lock();
 
+	std::vector<std::thread> surfaceThreads = std::vector<std::thread>();
+
 	// Set offset
 	Vector3 offset = Vector3(-colorMap->get_height() + generatedPosition.x, 0, -colorMap->get_height() + generatedPosition.z); 
+
+	int max = colorMap->get_height();
 
 	for (int y = 1; y < colorMap->get_height(); y++) {
 		for (int x = 0; x < colorMap->get_width(); x++) {
 			if (x != colorMap->get_width() - 1) {
 
-				// clear out vertex and color vectors
-				newQuad.clear();
-				newQuad.resize(0);
-				newColors.clear();
-				newColors.resize(0);
+				//MakeSurface(a, x, y, offset, lengthOfSquare, _heightMap, _colorMap);
 
-				//Create the four new vertices 
-				float heightVal = heightMap->get_pixel(x, lengthOfSquare - y).r;
-				newColors.push_back(determineColor(heightVal));
-				newQuad.push_back(Vector3(x * SIZE_OF_FACE_HORIZONTAL, heightVal * NOISE_MULTIPLIER, y * SIZE_OF_FACE_HORIZONTAL) + offset);
+				heightVals.clear();
 
-				heightVal = heightMap->get_pixel(x + 1, lengthOfSquare - y).r;
-				newColors.push_back(determineColor(heightVal));
-				newQuad.push_back(Vector3((x + 1) * SIZE_OF_FACE_HORIZONTAL, heightVal * NOISE_MULTIPLIER, y * SIZE_OF_FACE_HORIZONTAL) + offset);
+				heightVals.push_back(heightMap->get_pixel(x, max - y).r);
+				heightVals.push_back(heightMap->get_pixel(x + 1, max - y).r);
+				heightVals.push_back(heightMap->get_pixel(x, (max - y) - 1).r);
+				heightVals.push_back(heightMap->get_pixel((x + 1), (max - y) - 1).r);
 
-				heightVal = heightMap->get_pixel(x, (lengthOfSquare - y) - 1).r;
-				newColors.push_back(determineColor(heightVal));
-				newQuad.push_back(Vector3(x * SIZE_OF_FACE_HORIZONTAL, heightVal * NOISE_MULTIPLIER, (y + 1) * SIZE_OF_FACE_HORIZONTAL) + offset);
+				MakeSurface(a, x, y, offset, lengthOfSquare, heightVals);
 
-				heightVal = heightMap->get_pixel((x + 1), (lengthOfSquare - y) - 1).r;
-				newColors.push_back(determineColor(heightVal));
-				newQuad.push_back(Vector3((x + 1) * SIZE_OF_FACE_HORIZONTAL, heightVal * NOISE_MULTIPLIER, (y + 1) * SIZE_OF_FACE_HORIZONTAL) + offset);
-
-				//Create each face
-				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 0));
-				a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 1));
-
-				//set the name of the surfaces
-				a->surface_set_name(iD, String(std::to_string(iD).c_str()) + "Tri1");
-				iD++;
-				a->surface_set_name(iD, String(std::to_string(iD).c_str()) + "Tri2");
-				iD++;
+				//surfaceThreads.push_back(std::thread([=] { MakeSurface(a, x,y,offset,lengthOfSquare,heightVals);}));
 			}
 		}
 	}
@@ -118,9 +105,16 @@ void Chunk::generateTerrainMesh(Ref<Image> _heightMap, Ref<Image> _colorMap, Vec
 	colorMap->unlock();
 	heightMap->unlock();
 
+	for (auto &t : surfaceThreads)
+	{
+		t.join();
+	}
+
 	// Finally set mesh to array mesh
 	if (this != NULL)
 		this->set_mesh(a);
+
+	a.unref();
 }
 
 
@@ -129,7 +123,14 @@ Array Chunk::DrawFace(Vector<Vector3> verteces, Vector<Color> newColors, int i)
 {
 	Array mesh_array;
 
+	PoolVector3Array vertices;
+	PoolVector3Array normals;
+	PoolColorArray colors;
+	PoolIntArray indeces;
+
+
 	//resize which should make sure its empty before pushing back
+
 	vertices.resize(0);
 	colors.resize(0);
 	normals.resize(0);
@@ -223,4 +224,45 @@ void Chunk::addLevelSettings(float _levelOneMax, float _levelTwoMax, float _leve
 	levelTwoColor = _levelTwoColor;
 	levelThreeColor = _levelThreeColor;
 	levelFourColor = _levelFourColor;
+}
+
+
+void Chunk::MakeSurface(Ref<ArrayMesh> a, int x, int y, Vector3 offset, int lengthOfSquare, Vector<float> heightVals)
+{
+
+	Vector<Vector3> newQuad;
+	Vector<Color> newColors;
+
+	// clear out vertex and color vectors
+	newQuad.clear();
+	newQuad.resize(0);
+	newColors.clear();
+	newColors.resize(0);
+
+	//Create the four new vertices
+	float heightVal = heightVals[0];
+	newColors.push_back(determineColor(heightVal));
+	newQuad.push_back(Vector3(x * faceSize, heightVal * noiseMult, y * faceSize) + offset);
+
+	heightVal = heightVals[1];
+	newColors.push_back(determineColor(heightVal));
+	newQuad.push_back(Vector3((x + 1) * faceSize, heightVal * noiseMult, y * faceSize) + offset);
+
+	heightVal = heightVals[2];
+	newColors.push_back(determineColor(heightVal));
+	newQuad.push_back(Vector3(x * faceSize, heightVal * noiseMult, (y + 1) * faceSize) + offset);
+
+	heightVal = heightVals[3];
+	newColors.push_back(determineColor(heightVal));
+	newQuad.push_back(Vector3((x + 1) * faceSize, heightVal * noiseMult, (y + 1) * faceSize) + offset);
+
+	//Create each face
+	a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 0));
+	a->add_surface_from_arrays(ArrayMesh::PRIMITIVE_TRIANGLES, DrawFace(newQuad, newColors, 1));
+}
+
+void Chunk::addChunkSizeSettings(int horizontalSize, int _noiseMultiplier)
+{
+	faceSize = horizontalSize;
+	noiseMult = _noiseMultiplier;
 }
