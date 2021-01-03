@@ -90,7 +90,7 @@ class ChunkManager : public Node {
 		void checkIfChunksNeedToBeReloaded(Vector2 playerPos);
 
 		// Mutators
-		void changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity, float imageSize, float imageScale, int horizontalSize, int heightMultiplier);
+		void changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity, float imageSize, int horizontalSize, int heightMultiplier);
 		void changeLevelSettings(float _levelOneMax, float _levelTwoMax, float _levelThreeMax, Color _levelOneColor, Color _levelTwoColor, Color _levelThreeColor, Color _levelFourColor);
 };
 

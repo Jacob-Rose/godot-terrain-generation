@@ -1,11 +1,10 @@
 extends ChunkManager
 
 const NoiseOcatves = 3
-const NoisePersistence = 2.5
+const NoisePersistence = 3.0
 const NoiseLacunarity = 2.0
-const ImageSize = 30
-const ImageScale = 30
-const FaceSize = 1
+const ImageSize = 20
+const FaceSize = 2
 const HeightMultiplier = 5
 
 const LevelOneMax = 0.1
@@ -22,7 +21,7 @@ var Player
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Player = get_node("player")
-	change_settings(NoiseOcatves,NoisePersistence,NoiseLacunarity,ImageSize,ImageScale,FaceSize,HeightMultiplier)
+	change_settings(NoiseOcatves,NoisePersistence,NoiseLacunarity,ImageSize,FaceSize,HeightMultiplier)
 	change_level_settings(LevelOneMax,LevelTwoMax,LevelThreeMax,LevelOneColor,LevelTwoColor,LevelThreeColor,LevelFourColor)
 	pass # Replace with function body.
 

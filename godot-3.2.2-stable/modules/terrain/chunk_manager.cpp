@@ -6,7 +6,7 @@
 void ChunkManager::_bind_methods()
 {
 	ClassDB::bind_method(D_METHOD("check_for_chunk_update", "player_2d_position"), &ChunkManager::checkIfChunksNeedToBeReloaded);
-	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity", "Image Size", "Image Scale", "Length Of Each Face", "Noise Multiplier"), &ChunkManager::changeSettings);
+	ClassDB::bind_method(D_METHOD("change_settings", "Noise Octaves", "Noise Persistance", "Noise Lacunarity", "Image Size", "Length Of Each Face", "Noise Multiplier"), &ChunkManager::changeSettings);
 	ClassDB::bind_method(D_METHOD("change_level_settings", "Level One Max", "Level Two Max", "Level Three Max", "Level One Color", "Level Two Color", "Level Three Color", "Level Four Color"), &ChunkManager::changeLevelSettings);
 }
 
@@ -74,24 +74,41 @@ void ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 	// Create directional vector and the distance between the current chunk and player
 	Vector2 directionalVector = playerPos - locationOfCentralChunk;
 	float distance = sqrtf(powf(directionalVector.x, 2.0f) + powf(directionalVector.y, 2.0f));
+	std::string temp = "";
 
 	// Check if player is outside of central chunk square and adjust central chunk if needed
-	if (directionalVector.x <= -lengthOfSquare) {
+	if (directionalVector.x <= -(chunkPositionOffset)) {
+		temp = "Directional Vector: " + std::to_string(directionalVector.x) + " " + std::to_string(directionalVector.y) + "\n";
+		printf(temp.c_str());
+		temp = "Old Central Chunk Location: " + std::to_string(getCentralChunkLocation().x) + " " + std::to_string(getCentralChunkLocation().y) + "\n";
+		printf(temp.c_str());
 		locationOfCentralChunk.x -= lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
-	if (directionalVector.x >= lengthOfSquare) {
+	if (directionalVector.x >= ((lengthOfSquare * chunkPositionOffset) + 2)) {
+		temp = "Directional Vector: " + std::to_string(directionalVector.x) + " " + std::to_string(directionalVector.y) + "\n";
+		printf(temp.c_str());
+		temp = "Old Central Chunk Location: " + std::to_string(getCentralChunkLocation().x) + " " + std::to_string(getCentralChunkLocation().y) + "\n";
+		printf(temp.c_str());
 		locationOfCentralChunk.x += lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
-	if (directionalVector.y <= -lengthOfSquare) {
+	if (directionalVector.y <= -((lengthOfSquare * chunkPositionOffset) + 2)) {
+		temp = "Directional Vector: " + std::to_string(directionalVector.x) + " " + std::to_string(directionalVector.y) + "\n";
+		printf(temp.c_str());
+		temp = "Old Central Chunk Location: " + std::to_string(getCentralChunkLocation().x) + " " + std::to_string(getCentralChunkLocation().y) + "\n";
+		printf(temp.c_str());
 		locationOfCentralChunk.y -= lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
 
-	if (directionalVector.y >= lengthOfSquare) {
+	if (directionalVector.y >= ((lengthOfSquare * chunkPositionOffset) + 2)) {
+		temp = "Directional Vector: " + std::to_string(directionalVector.x) + " " + std::to_string(directionalVector.y) + "\n";
+		printf(temp.c_str());
+		temp = "Old Central Chunk Location: " + std::to_string(getCentralChunkLocation().x) + " " + std::to_string(getCentralChunkLocation().y) + "\n";
+		printf(temp.c_str());
 		locationOfCentralChunk.y += lengthOfSquare * chunkPositionOffset;
 		needsReloading = true;
 	}
@@ -99,6 +116,12 @@ void ChunkManager::checkIfChunksNeedToBeReloaded(Vector2 playerPos) {
 	// If the player is outside of the central chunk, then make new chunks
 	if (needsReloading)
 	{
+		temp = "New Central Chunk Location: " + std::to_string(getCentralChunkLocation().x) + " " + std::to_string(getCentralChunkLocation().y) + "\n";
+		printf(temp.c_str());
+
+		temp = "Player Location: " + std::to_string(playerPos.x) + " " + std::to_string(playerPos.y) + "\n";
+		printf(temp.c_str());
+
 		makeNewWaveOfChunks(getCentralChunkLocation());
 	}
 }
@@ -123,49 +146,52 @@ void ChunkManager::makeNewWaveOfChunks(Vector2 newCentralChunkPos)
 	// Create noise offset
 	float offsetMultiplier = noiseImageOffset;
 
+	float centralChunkLocX = newCentralChunkPos.x;
+	float centralChunkLocY = newCentralChunkPos.y;
+
 	// Center chunk
-	Vector3 playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
+	Vector3 playerLocation = Vector3(centralChunkLocX, 0, centralChunkLocY);
 	Vector3 newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY), 0);
 	createChunk(playerLocation, newLocation);
 
 	//// Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
+	playerLocation = Vector3(centralChunkLocX + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset, 0, centralChunkLocY);
 	createChunk(playerLocation, newLocation);
 
 	//// Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierY);
+	playerLocation = Vector3(centralChunkLocX - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset, 0, centralChunkLocY);
 	createChunk(playerLocation, newLocation);
 
 	//// Upper Chunk
 	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
+	playerLocation = Vector3(centralChunkLocX, 0, centralChunkLocY + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 	//// Lower Chunk
 	newLocation = Vector3(offsetMultiplier * multiplierX, offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * multiplierX, 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
+	playerLocation = Vector3(centralChunkLocX, 0, centralChunkLocY - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 	//// Top Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
+	playerLocation = Vector3(centralChunkLocX + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset, 0, centralChunkLocY + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 	//// Bottom Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
+	playerLocation = Vector3(centralChunkLocX - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset, 0, centralChunkLocY - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 	//// Bottom Right Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX + 1.0f), offsetMultiplier * -(multiplierY - 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX + 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY - 1));
+	playerLocation = Vector3(centralChunkLocX + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset, 0, centralChunkLocY - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 	//// Top Left Chunk
 	newLocation = Vector3(offsetMultiplier * (multiplierX - 1.0f), offsetMultiplier * -(multiplierY + 1.0f), 0);
-	playerLocation = Vector3(((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierX - 1), 0, ((lengthOfSquare * chunkPositionOffset) - chunkPositionOffset) * (multiplierY + 1));
+	playerLocation = Vector3(centralChunkLocX - (lengthOfSquare * chunkPositionOffset) + chunkPositionOffset, 0, centralChunkLocY + (lengthOfSquare * chunkPositionOffset) - chunkPositionOffset);
 	createChunk(playerLocation, newLocation);
 
 }
@@ -190,14 +216,13 @@ void ChunkManager::clearOutChunks()
 
 
 // This function changes all of the chunk noise settings
-void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity, float imageSize, float imageScale,int horizontalSize, int heightMultiplier) {
+void ChunkManager::changeSettings(int imageOctaves, float imagePersistance, float imageLacunarity, float imageSize,int horizontalSize, int heightMultiplier) {
 	noiseImageOctaves = imageOctaves;
 	noiseImagePersistance = imagePersistance;
 	noiseImageLacunarity = imageLacunarity;
 	noiseImageSize = imageSize;
 	lengthOfSquare = imageSize;
 	noiseImageOffset = OFFSET_COEFFICIENT * (noiseImageSize - 1);
-	noiseImageScale = imageScale;
 	chunkPositionOffset = horizontalSize;
 	noiseMultiplier = heightMultiplier;
 }
